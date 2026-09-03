@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev & Security Suite | منصة المطور والأمن السيبراني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 950: '#022c22' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 px-6 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="bg-emerald-500/10 border border-emerald-500/30 p-2 rounded-xl text-emerald-400 font-bold text-lg">🛡️</div>
+            <div>
+                <h1 class="font-bold text-base text-white tracking-wide">DevSecurity <span class="text-emerald-400">Pro</span></h1>
+                <p class="text-xs text-slate-400">المنصة الشاملة لأدوات التطوير والأمان</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <div class="hidden sm:flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-full border border-slate-800 text-xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-slate-300">متصل (Client-Side Secure)</span>
+            </div>
+            <!-- Profile Avatar Simulation -->
+            <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-bold text-xs text-slate-950">M</div>
+                <span class="text-xs font-medium text-slate-200">Mina Rizkallah</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="flex flex-1 flex-col md:flex-row">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 bg-slate-900/50 border-e border-slate-800 p-4 flex md:flex-col gap-2 overflow-x-auto">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                📊 لوحة التحكم
+            </button>
+            <button onclick="switchTab('base64')" id="btn-base64" class="sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                🔄 مشفر Base64
+            </button>
+            <button onclick="switchTab('hasher')" id="btn-hasher" class="sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                🔒 مولد الـ Hashes
+            </button>
+            <button onclick="switchTab('password')" id="btn-password" class="sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
+                🔑 فاحص كلمات المرور
+            </button>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
+
+            <!-- TAB 1: DASHBOARD -->
+            <div id="tab-dashboard" class="tab-content space-y-6">
+                <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl">
+                    <h2 class="text-xl font-bold text-white mb-2">أهلاً بك يا مينا في مركز عملياتك البرمجية 🚀</h2>
+                    <p class="text-xs text-slate-400 leading-relaxed">هذه المنصة مصممة خصيصاً لتجمع أقوى الأدوات الاحترافية في مكان واحد. اختر أي أداة من القائمة الجانبية وابدأ العمل مباشرة دون الحاجة لأي سيرفرات خارجية.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-emerald-400 text-lg mb-1">⚡</div>
+                        <h3 class="font-bold text-sm text-slate-200">سرعة فائقة</h3>
+                        <p class="text-xs text-slate-400 mt-1">المعالجة تتم بالكامل داخل متصفحك بلحظتها.</p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-cyan-400 text-lg mb-1">🛡️</div>
+                        <h3 class="font-bold text-sm text-slate-200">أمان تام</h3>
+                        <p class="text-xs text-slate-400 mt-1">بياناتك لا تغادر جهازك أو متصفحك نهائياً.</p>
+                    </div>
+                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                        <div class="text-amber-400 text-lg mb-1">🌐</div>
+                        <h3 class="font-bold text-sm text-slate-200">مفتوح ومستضاف</h3>
+                        <p class="text-xs text-slate-400 mt-1">يعمل على GitHub Pages بكفاءة عالية.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: BASE64 TOOL -->
+            <div id="tab-base64" class="tab-content hidden space-y-4">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-base font-bold text-emerald-400 flex items-center gap-2">🔄 محول Base64 المتقدم</h2>
+                    <textarea id="b64-text" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أدخل النص هنا للترميز أو فك الرموز..."></textarea>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="b64Encode()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">تشفير (Encode)</button>
+                        <button onclick="b64Decode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition-all">فك التشفير (Decode)</button>
+                        <button onclick="navigator.clipboard.writeText(document.getElementById('b64-text').value)" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-4 py-2 rounded-xl text-xs font-bold transition-all ms-auto">نسخ النص</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: HASHER -->
+            <div id="tab-hasher" class="tab-content hidden space-y-4">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-base font-bold text-emerald-400 flex items-center gap-2">🔒 مولد بصمات الـ Hashes (SHA-256)</h2>
+                    <input type="text" id="hash-input" oninput="generateHash()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="اكتب النص لتوليد الـ Hash فوراً...">
+                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
+                        <span class="text-xs text-slate-500 block mb-1">النتيجة (SHA-256):</span>
+                        <p id="hash-output" class="text-xs text-emerald-400 font-mono break-all select-all">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: PASSWORD CHECKER -->
+            <div id="tab-password" class="tab-content hidden space-y-4">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-base font-bold text-emerald-400 flex items-center gap-2">🔑 فاحص قوة كلمات المرور</h2>
+                    <input type="password" id="pwd-input" oninput="checkPassword()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أدخل كلمة المرور لاختبار قوتها...">
+                    <div id="pwd-strength" class="text-xs font-medium text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                        الرجاء إدخال كلمة مرور للتقييم.
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500">
+        تم التطوير بواسطة Mina Rizkallah 🚀 | جميع الحقوق محفوظة لمنصة DevSecurity Pro
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.sidebar-btn').forEach(el => {
+                el.className = "sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200";
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.className = "sidebar-btn flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        }
+
+        function b64Encode() {
+            let val = document.getElementById('b64-text').value;
+            try { document.getElementById('b64-text').value = btoa(unescape(encodeURIComponent(val))); } catch(e) { alert('خطأ في التشفير'); }
+        }
+        function b64Decode() {
+            let val = document.getElementById('b64-text').value;
+            try { document.getElementById('b64-text').value = decodeURIComponent(escape(atob(val))); } catch(e) { alert('صيغة Base64 غير صالحة'); }
+        }
+
+        async function generateHash() {
+            let text = document.getElementById('hash-input').value;
+            if(!text) { document.getElementById('hash-output').innerText = "-"; return; }
+            const msgBuffer = new TextEncoder().encode(text);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            document.getElementById('hash-output').innerText = hashHex;
+        }
+
+        function checkPassword() {
+            let pwd = document.getElementById('pwd-input').value;
+            let res = document.getElementById('pwd-strength');
+            if(pwd.length === 0) { res.innerText = "الرجاء إدخال كلمة مرور للتقييم."; res.className = "text-xs font-medium text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800"; return; }
+            let score = 0;
+            if(pwd.length >= 8) score++;
+            if(/[A-Z]/.test(pwd)) score++;
+            if(/[0-9]/.test(pwd)) score++;
+            if(/[^A-Za-z0-9]/.test(pwd)) score++;
+
+            if(score <= 2) {
+                res.innerHTML = "🔴 كلمة المرور ضعيفة جداً وتسهل اختراقها.";
+                res.className = "text-xs font-medium text-rose-400 bg-rose-950/20 p-3 rounded-xl border border-rose-900/50";
+            } else if(score === 3) {
+                res.innerHTML = "🟡 كلمة المرور متوسطة الأمان، يفضل إضافة رموز وأرقام.";
+                res.className = "text-xs font-medium text-amber-400 bg-amber-950/20 p-3 rounded-xl border border-amber-900/50";
+            } else {
+                res.innerHTML = "🟢 كلمة المرور قوية جداً وآمنة ضد هجمات التخمين!";
+                res.className = "text-xs font-medium text-emerald-400 bg-emerald-950/20 p-3 rounded-xl border border-emerald-900/50";
+            }
+        }
+    </script>
+</body>
+</html>
