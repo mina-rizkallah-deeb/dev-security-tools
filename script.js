@@ -1,152 +1,198 @@
-// ترسانة أدوات الهاتف (15 أداة)
-const mobileTools = [
-    "Nmap", "Netcat", "Nikto", "SQLmap", "Gobuster", 
-    "FFUF", "Hydra", "John the Ripper", "Hashcat", "Metasploit", 
-    "Scapy", "OpenSSL", "DNSRecon", "WhatWeb", "WPScan"
-];
+// إعدادات السيرفر السحابي الخاصة بك (Firebase Config)
+const firebaseConfig = {
+  apiKey: "AIzaSyDlOtktbcJgSKFqNN-vWtwTGvH9WvEtvpo",
+  authDomain: "cyber-deebka.firebaseapp.com",
+  projectId: "cyber-deebka",
+  storageBucket: "cyber-deebka.firebasestorage.app",
+  messagingSenderId: "41564445623",
+  appId: "1:41564445623:web:367a09c5b3ae0f6033a632",
+  measurementId: "G-6D82VZ8H4M"
+};
 
-// ترسانة أدوات الكمبيوتر (15 أداة)
-const pcTools = [
-    "Nmap", "Wireshark", "Burp Suite", "Metasploit", "SQLmap", 
-    "Nuclei", "FFUF", "Gobuster", "Hashcat", "John the Ripper", 
-    "Aircrack-ng", "Kismet", "Responder", "Amass", "BloodHound"
-];
+// تهيئة فايربيس
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-// التحقق من حالة تسجيل الدخول
-function checkAuth() {
-    let user = localStorage.getItem('cyber_user');
-    if (!user) {
-        document.getElementById('auth-screen').classList.remove('hidden');
-        document.getElementById('app-screen').classList.add('hidden');
-    } else {
+// إيميلات الأدمن المصرح لها بأمان تام (يمكنك وضع إيميلك هنا)
+const ADMIN_EMAILS = ["mina@cyberdeebka.sec", "admin@cyberdeebka.sec"]; 
+
+// ترسانة الأدوات
+const mobileTools = ["Nmap", "Netcat", "Nikto", "SQLmap", "Gobuster", "FFUF", "Hydra", "John the Ripper", "Hashcat", "Metasploit", "Scapy", "OpenSSL", "DNSRecon", "WhatWeb", "WPScan"];
+const pcTools = ["Nmap", "Wireshark", "Burp Suite", "Metasploit", "SQLmap", "Nuclei", "FFUF", "Gobuster", "Hashcat", "John the Ripper", "Aircrack-ng", "Kismet", "Responder", "Amass", "BloodHound"];
+
+let currentUserData = { balance: 0.00, isPro: false };
+
+// مراقبة حالة تسجيل الدخول على السيرفر لحظياً
+auth.onAuthStateChanged(async (user) => {
+    if (user) {
         document.getElementById('auth-screen').classList.add('hidden');
         document.getElementById('app-screen').classList.remove('hidden');
-        loadUserData(JSON.parse(user));
-        renderTools(mobileTools, pcTools);
-    }
-}
+        document.getElementById('prof-email').value = user.email;
 
-// معالجة تسجيل الدخول بشكل سليم وبدون أخطاء
-function handleLogin() {
+        // جلب بيانات المستخدم من قاعدة البيانات السحابية (Firestore)
+        let userDocRef = db.collection('users').doc(user.uid);
+        let doc = await userDocRef.get();
+
+        if (!doc.exists) {
+            let initialData = { email: user.email, balance: 0.00, isPro: false };
+            await userDocRef.set(initialData);
+            currentUserData = initialData;
+        } else {
+            currentUserData = doc.data();
+        }
+
+        loadUserData(currentUserData);
+
+        // فحص صلاحية الأدمن
+        if (ADMIN_EMAILS.includes(user.email)) {
+            document.getElementById('admin-nav-btn').classList.remove('hidden');
+        } else {
+            document.getElementById('admin-nav-btn').classList.add('hidden');
+        }
+
+        renderTools(mobileTools, pcTools);
+    } else {
+        document.getElementById('auth-screen').classList.remove('hidden');
+        document.getElementById('app-screen').classList.add('hidden');
+    }
+});
+
+// تسجيل حساب جديد حقيقي
+async function handleSignup() {
     let email = document.getElementById('auth-user').value.trim();
     let pass = document.getElementById('auth-pass').value.trim();
-    
-    if(!email || !pass) {
-        alert('⚠️ الرجاء إدخال البريد الإلكتروني وكلمة المرور للمتابعة.');
+    if (!email || !pass) {
+        alert('⚠️ يرجى كتابة البريد الإلكتروني وكلمة المرور.');
         return;
     }
-    
-    if(!email.includes('@') || !email.includes('.')) {
-        alert('⚠️ صيغة البريد الإلكتروني غير صحيحة!');
+    try {
+        await auth.createUserWithEmailAndPassword(email, pass);
+        alert('🎉 تم إنشاء الحساب بنجاح سحابياً!');
+    } catch (error) {
+        alert('❌ خطأ في التسجيل: ' + error.message);
+    }
+}
+
+// تسجيل الدخول الحقيقي
+async function handleLogin() {
+    let email = document.getElementById('auth-user').value.trim();
+    let pass = document.getElementById('auth-pass').value.trim();
+    if (!email || !pass) {
+        alert('⚠️ يرجى كتابة البريد الإلكتروني وكلمة المرور.');
         return;
     }
-
-    let userData = { email, balance: 0.00, isPro: false };
-    localStorage.setItem('cyber_user', JSON.stringify(userData));
-    checkAuth();
-}
-
-// تحميل بيانات المستخدم في الواجهة
-function loadUserData(user) {
-    document.getElementById('prof-email').value = user.email;
-    document.getElementById('wallet-balance').innerText = user.balance.toFixed(2) + ' $';
-    if(user.isPro) {
-        document.getElementById('sub-badge').innerText = "عضوية PRO مميزة ⭐";
-        document.getElementById('sub-badge').className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
-        document.getElementById('wallet-status').innerText = "PRO Active";
-        let banner = document.getElementById('ad-banner');
-        if(banner) banner.style.display = "none";
+    try {
+        await auth.signInWithEmailAndPassword(email, pass);
+    } catch (error) {
+        alert('❌ خطأ في الدخول: تأكد من صحة البريد أو كلمة المرور.');
     }
 }
 
-// عرض الأدوات في الأقسام الخاصة بها
-function renderTools(mList, pList) {
-    let mGrid = document.getElementById('mobile-tools-grid');
-    let pGrid = document.getElementById('pc-tools-grid');
+// تسجيل الخروج
+async function handleLogout() {
+    await auth.signOut();
+}
+
+// تحديث المحفظة سحابياً (شحن الرصيد)
+async function topUpWallet(amount) {
+    let user = auth.currentUser;
+    if (!user) return;
     
-    mGrid.innerHTML = mList.map((t) => `
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center hover:border-emerald-500/50 transition-all">
-            <span class="text-xs font-mono text-emerald-400">📱 ${t}</span>
-            <button onclick="runToolAction('Mobile', '${t}')" class="bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all">تشغيل</button>
-        </div>
-    `).join('');
-
-    pGrid.innerHTML = pList.map((t) => `
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center hover:border-cyan-500/50 transition-all">
-            <span class="text-xs font-mono text-cyan-400">💻 ${t}</span>
-            <button onclick="runToolAction('PC', '${t}')" class="bg-cyan-600/20 text-cyan-400 hover:bg-cyan-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all">تحليل</button>
-        </div>
-    `).join('');
+    currentUserData.balance += amount;
+    await db.collection('users').doc(user.uid).update({ balance: currentUserData.balance });
+    loadUserData(currentUserData);
+    alert(`✅ تم شحن مبلغ $${amount} بنجاح إلى محفظتك السحابية!`);
 }
 
-// محرك البحث الشامل والذكي
-function globalSearch(query) {
-    let q = query.toLowerCase().trim();
-    let filteredMobile = mobileTools.filter(t => t.toLowerCase().includes(q));
-    let filteredPc = pcTools.filter(t => t.toLowerCase().includes(q));
-    renderTools(filteredMobile, filteredPc);
-}
+// الترقية إلى Pro سحابياً
+async function upgradeToPro() {
+    let user = auth.currentUser;
+    if (!user) return;
 
-// تشغيل الأداة
-function runToolAction(platform, toolName) {
-    alert(`⚡ جاري إعداد بيئة التشغيل لأداة [${toolName}] على منصة (${platform})..`);
-}
-
-// شحن المحفظة
-function topUpWallet(amount) {
-    let user = JSON.parse(localStorage.getItem('cyber_user'));
-    user.balance += amount;
-    localStorage.setItem('cyber_user', JSON.stringify(user));
-    loadUserData(user);
-    alert(`✅ تم شحن مبلغ $${amount} بنجاح إلى محفظتك!`);
-}
-
-// الترقية إلى Pro
-function upgradeToPro() {
-    let user = JSON.parse(localStorage.getItem('cyber_user'));
-    if(user.balance < 9.99) {
+    if (currentUserData.balance < 9.99) {
         alert('❌ رصيد المحفظة غير كافي! يرجى شحن المحفظة أولاً بقيمة 9.99$ على الأقل.');
         return;
     }
-    user.balance -= 9.99;
-    user.isPro = true;
-    localStorage.setItem('cyber_user', JSON.stringify(user));
-    loadUserData(user);
+
+    currentUserData.balance -= 9.99;
+    currentUserData.isPro = true;
+
+    await db.collection('users').doc(user.uid).update({
+        balance: currentUserData.balance,
+        isPro: true
+    });
+
+    loadUserData(currentUserData);
     alert('🎉 مبروك! تم ترقية حسابك إلى PRO بنجاح وتم إزالة الإعلانات.');
 }
 
-// تبديل لغة المنصة
+// تحميل البيانات في الواجهة
+function loadUserData(data) {
+    document.getElementById('wallet-balance').innerText = (data.balance || 0).toFixed(2) + ' $';
+    let badge = document.getElementById('sub-badge');
+    let status = document.getElementById('wallet-status');
+    let banner = document.getElementById('ad-banner');
+
+    if (data.isPro) {
+        badge.innerText = "عضوية PRO مميزة ⭐";
+        badge.className = "px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+        status.innerText = "PRO Active";
+        if (banner) banner.style.display = "none";
+    } else {
+        badge.innerText = "حساب مجاني (Free)";
+        status.innerText = "مجاني (Free)";
+        if (banner) banner.style.display = "flex";
+    }
+}
+
+// عرض الأدوات
+function renderTools(mList, pList) {
+    document.getElementById('mobile-tools-grid').innerHTML = mList.map(t => `
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center hover:border-emerald-500/50 transition-all">
+            <span class="text-xs font-mono text-emerald-400">📱 ${t}</span>
+            <button onclick="alert('⚡ جاري تنفيذ أمر [${t}] على بيئة الهاتف..')" class="bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">تشغيل</button>
+        </div>
+    `).join('');
+
+    document.getElementById('pc-tools-grid').innerHTML = pList.map(t => `
+        <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex justify-between items-center hover:border-cyan-500/50 transition-all">
+            <span class="text-xs font-mono text-cyan-400">💻 ${t}</span>
+            <button onclick="alert('⚡ جاري تشخيص الحزمة لـ [${t}] على بيئة الحاسوب..')" class="bg-cyan-600/20 text-cyan-400 hover:bg-cyan-600 hover:text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">تحليل</button>
+        </div>
+    `).join('');
+}
+
+// البحث الشامل
+function globalSearch(q) {
+    let query = q.toLowerCase().trim();
+    renderTools(
+        mobileTools.filter(t => t.toLowerCase().includes(query)),
+        pcTools.filter(t => t.toLowerCase().includes(query))
+    );
+}
+
+// لغات المنصة
 function changeLanguage(lang) {
-    if(lang === 'en') {
-        alert('🌐 English language pack selected. (Defaulting UI components to English framework)');
+    if (lang === 'en') {
+        alert('🌐 English language pack selected.');
     } else {
         alert('🌐 تم تفعيل اللغة العربية بنجاح.');
     }
 }
 
-// التنقل السلس بين التبويبات
-function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-    let target = document.getElementById('tab-' + tabId);
-    if(target) target.classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// إدارة الإشعارات
+// الإشعارات
 function toggleNotifications() {
     let box = document.getElementById('notif-box');
     box.classList.toggle('hidden');
     let badge = document.getElementById('notif-badge');
-    if(badge) badge.style.display = 'none';
+    if (badge) badge.style.display = 'none';
 }
 
-// تسجيل الخروج
-function logout() {
-    if(confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-        localStorage.removeItem('cyber_user');
-        checkAuth();
-    }
+// التنقل بين التبويبات
+function switchTab(id) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    let target = document.getElementById('tab-' + id);
+    if (target) target.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-window.onload = checkAuth;
-      
