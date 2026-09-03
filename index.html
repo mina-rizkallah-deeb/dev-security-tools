@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deebka | Dev & Security Suite Pro</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -15,486 +16,214 @@
             }
         }
     </script>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950 pb-16 md:pb-0">
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col selection:bg-emerald-500 selection:text-slate-950">
 
-    <!-- Top Navbar -->
-    <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-50 px-4 md:px-6 py-3 flex justify-between items-center">
-        <!-- Left: Logo & Sidebar Toggle -->
-        <div class="flex items-center gap-3">
-            <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1.5 rounded-lg bg-slate-800/50">
-                ☰
-            </button>
-            <div class="flex items-center gap-2">
-                <div class="bg-emerald-500/10 border border-emerald-500/30 p-2 rounded-xl text-emerald-400 font-bold text-sm">🛡️</div>
-                <div class="hidden sm:block">
-                    <h1 class="font-bold text-xs text-white">DevSecurity <span class="text-emerald-400">Suite</span></h1>
-                    <p class="text-[9px] text-slate-400">المنصة الاحترافية الشاملة</p>
+    <!-- شاشة تسجيل الدخول وإنشاء الحساب -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-950 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl max-w-md w-full shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <div class="inline-block bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-2xl text-emerald-400 font-bold text-xl mb-1">🛡️</div>
+                <h2 class="text-xl font-black tracking-wider text-white">DEEBKA <span class="text-emerald-400">HUB</span></h2>
+                <p class="text-xs text-slate-400">سجل دخولك للوصول إلى الأدوات التقنية والسيبرانية</p>
+            </div>
+            <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
+                <button onclick="switchAuthTab('login')" id="tab-login-btn" class="flex-1 py-2 rounded-lg bg-emerald-600 text-white transition-all">تسجيل الدخول</button>
+                <button onclick="switchAuthTab('register')" id="tab-reg-btn" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white transition-all">حساب جديد</button>
+            </div>
+            <div class="space-y-4">
+                <div id="reg-name-box" class="hidden">
+                    <label class="text-xs text-slate-400 block mb-1">الاسم الكامل:</label>
+                    <input type="text" id="auth-name" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أدخل اسمك...">
                 </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">البريد الإلكتروني / المستخدم:</label>
+                    <input type="text" id="auth-user" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="name@domain.com">
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block mb-1">كلمة المرور:</label>
+                    <input type="password" id="auth-pass" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="••••••••">
+                </div>
+                <button onclick="handleAuthSubmit()" id="auth-submit-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-xs font-bold transition-all shadow-lg shadow-emerald-900/20">دخول للمنصة</button>
             </div>
         </div>
-
-        <!-- Center: Deebka Brand & Search Bar -->
-        <div class="flex items-center gap-4 flex-1 max-w-md mx-4">
-            <div class="text-sm md:text-base font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 hidden lg:block">
-                DEEBKA
-            </div>
-            <div class="relative w-full">
-                <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500 text-xs">🔍</span>
-                <input type="text" id="global-search" oninput="filterTools(this.value)" placeholder="ابحث عن أي أداة (Base64, JWT, Subnet...)..." class="w-full bg-slate-950 border border-slate-800 rounded-xl py-1.5 pr-9 pl-4 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-all">
-            </div>
-        </div>
-
-        <!-- Right: Notifications & Profile -->
-        <div class="flex items-center gap-3">
-            <div class="relative">
-                <button onclick="toggleNotifications()" class="relative p-2 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-300 transition-all text-xs">
-                    🔔
-                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                </button>
-                <div id="notif-dropdown" class="hidden absolute left-0 mt-2 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-3 z-50 text-xs space-y-2">
-                    <div class="font-bold text-emerald-400 border-b border-slate-800 pb-1">الإشعارات والتحديثات</div>
-                    <p class="text-slate-400">🚀 تم تفعيل منصة Deebka بنجاح على سحابة GitHub Pages.</p>
-                    <p class="text-slate-400">🔒 كافة أدوات التشفير تعمل محلياً تماماً داخل متصفحك.</p>
-                </div>
-            </div>
-
-            <div onclick="switchTab('profile')" class="cursor-pointer flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 transition-all">
-                <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-bold text-xs text-slate-950" id="nav-avatar">M</div>
-                <span class="text-xs font-medium text-slate-200 hidden sm:inline" id="nav-username">Mina Rizkallah</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Layout -->
-    <div class="flex flex-1 flex-col md:flex-row relative">
-        
-        <!-- Sidebar -->
-        <aside id="sidebar" class="w-64 bg-slate-900/60 border-e border-slate-800 p-4 flex flex-col gap-1.5 shrink-0 fixed md:static inset-y-0 right-0 z-40 transform translate-x-full md:translate-x-0 transition-transform duration-300 backdrop-blur-md overflow-y-auto">
-            <div class="flex justify-between items-center md:hidden mb-2 pb-2 border-b border-slate-800">
-                <span class="font-bold text-emerald-400 text-xs">القائمة الرئيسية</span>
-                <button onclick="toggleSidebar()" class="text-slate-400 text-sm">✕</button>
-            </div>
-
-            <!-- Language Selector in Sidebar -->
-            <div class="mb-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
-                <label class="text-[10px] text-slate-400 block mb-1">🌍 اختر لغة الواجهة:</label>
-                <select id="lang-select" onchange="changeLanguage(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
-                    <option value="ar">العربية (Arabic)</option>
-                    <option value="en">English (إنجليزي)</option>
-                    <option value="es">Español (إسباني)</option>
-                    <option value="fr">Français (فرنسي)</option>
-                    <option value="it">Italiano (إيطالي)</option>
-                    <option value="zh">中文 (صيني)</option>
-                    <option value="ja">日本語 (ياباني)</option>
-                    <option value="ko">한국어 (كوري)</option>
-                    <option value="hi">हिन्दी (هندي)</option>
-                </select>
-            </div>
-
-            <div id="sidebar-menu" class="space-y-1">
-                <button onclick="switchTab('dashboard')" id="btn-dashboard" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    📊 لوحة التحكم الرئيسية
-                </button>
-                <button onclick="switchTab('base64')" id="btn-base64" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    🔄 مشفر / مفكك Base64
-                </button>
-                <button onclick="switchTab('jwt')" id="btn-jwt" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    🎫 محلل رموز JWT
-                </button>
-                <button onclick="switchTab('hasher')" id="btn-hasher" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    🔒 مولد الـ Hashes (SHA-256)
-                </button>
-                <button onclick="switchTab('password')" id="btn-password" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    🔑 فاحص ومولد كلمات السر
-                </button>
-                <button onclick="switchTab('subnet')" id="btn-subnet" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    🌐 حاسبة الشبكات (Subnet IP)
-                </button>
-                <button onclick="switchTab('tips')" id="btn-tips" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    💡 نصائح وأسرار الأمن السيبراني
-                </button>
-                <button onclick="switchTab('faq')" id="btn-faq" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">
-                    ❓ الأسئلة الشائعة (FAQ)
-                </button>
-                <button onclick="switchTab('profile')" id="btn-profile" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200 mt-4">
-                    ⚙️ إعدادات الحساب والبروفايل
-                </button>
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
-
-            <!-- TAB 1: DASHBOARD -->
-            <div id="tab-dashboard" class="tab-content space-y-6">
-                <div class="bg-gradient-to-r from-emerald-950/50 via-slate-900 to-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl">
-                    <h2 class="text-xl font-bold text-white mb-2" data-i18n="welcome">أهلاً بك مجدداً في Deebka Hub، <span id="dash-name" class="text-emerald-400">مِنا</span> 👋</h2>
-                    <p class="text-xs text-slate-400 leading-relaxed" data-i18n="welcome_desc">منصتك الاحترافية المدمجة تعمل الآن بأعلى كفاءة على السحابة. يمكنك اختيار أي أداة من الشريط الجانبي أو استخدام البحث السريع بالأعلى.</p>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                        <div class="text-emerald-400 text-lg mb-1">🛠️</div>
-                        <h3 class="font-bold text-xs text-slate-200">أدوات متكاملة وسريعة</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">تشفير، تحليل، وتوليد بيانات فوري.</p>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                        <div class="text-cyan-400 text-lg mb-1">🌐</div>
-                        <h3 class="font-bold text-xs text-slate-200">متعدد اللغات بالكامل</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">يدعم العربية، الإنجليزية، ولغات عالمية أخرى.</p>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl shadow-lg">
-                        <div class="text-amber-400 text-lg mb-1">🔒</div>
-                        <h3 class="font-bold text-xs text-slate-200">أمان وحماية مطلقة</h3>
-                        <p class="text-[11px] text-slate-400 mt-1">العمليات تتم بالكامل داخل متصفحك (Client-side).</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: BASE64 -->
-            <div id="tab-base64" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">🔄 مشفر ومفكك Base64 الاحترافي</h2>
-                    <textarea id="b64-text" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" placeholder="اكتب النص هنا للترميز أو فك التشفير..."></textarea>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="b64Encode()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">تشفير (Encode)</button>
-                        <button onclick="b64Decode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-bold transition-all">فك التشفير (Decode)</button>
-                        <button onclick="navigator.clipboard.writeText(document.getElementById('b64-text').value); alert('تم النسخ بنجاح!')" class="bg-slate-800 hover:bg-slate-700 text-cyan-400 px-4 py-2 rounded-xl text-xs font-bold transition-all ms-auto">نسخ المحتوى</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: JWT DECODER -->
-            <div id="tab-jwt" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">🎫 محلل رموز التوثيق الآمن (JWT Decoder)</h2>
-                    <textarea id="jwt-input" oninput="decodeJWT()" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" placeholder="الصق رمز الـ JWT هنا (eyJhbGciOi...)"></textarea>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] text-slate-500 block mb-1">الرأس (Header):</span>
-                            <pre id="jwt-header" class="text-[11px] text-cyan-400 font-mono whitespace-pre-wrap">-</pre>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <span class="text-[10px] text-slate-500 block mb-1">المحتوى (Payload):</span>
-                            <pre id="jwt-payload" class="text-[11px] text-emerald-400 font-mono whitespace-pre-wrap">-</pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: HASHER -->
-            <div id="tab-hasher" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">🔒 مولد بصمات الحماية الفورية (SHA-256)</h2>
-                    <input type="text" id="hash-input" oninput="generateHash()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" placeholder="اكتب النص لتوليد البصمة فوراً...">
-                    <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
-                        <span class="text-[10px] text-slate-500 block mb-1">البصمة الناتجة (Hash Output):</span>
-                        <p id="hash-output" class="text-xs text-emerald-400 font-mono break-all select-all">-</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 5: PASSWORD CHECKER & GENERATOR -->
-            <div id="tab-password" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">🔑 فاحص ومولد كلمات المرور الخارقة</h2>
-                    <input type="password" id="pwd-input" oninput="checkPassword()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أدخل كلمة المرور لاختبار قوتها ومعرفة كفاءتها...">
-                    <div id="pwd-strength" class="text-xs font-medium text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800">
-                        الرجاء إدخال كلمة مرور للتقييم الفوري.
-                    </div>
-                    <div class="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                        <button onclick="generateStrongPassword()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">توليد كلمة سر آمنة 16 خانة</button>
-                        <span id="gen-pwd-output" class="text-xs font-mono text-cyan-400 select-all bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800"></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 6: SUBNET CALCULATOR -->
-            <div id="tab-subnet" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">🌐 حاسبة الشبكات ونطاقات IP (Subnet Calculator)</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-slate-400 block mb-1">عنوان IP الأساسي:</label>
-                            <input type="text" id="ip-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" value="192.168.1.1">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 block mb-1">قناع الشبكة (CIDR):</label>
-                            <select id="cidr-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono">
-                                <option value="24">/24 (255.255.255.0 - 254 Host)</option>
-                                <option value="25">/25 (255.255.255.128 - 126 Host)</option>
-                                <option value="26">/26 (255.255.255.192 - 62 Host)</option>
-                                <option value="28">/28 (255.255.255.240 - 14 Host)</option>
-                                <option value="30">/30 (255.255.252.252 - 2 Host)</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button onclick="calculateSubnet()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">حساب تفاصيل النطاق</button>
-                    <div id="subnet-result" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 space-y-1">
-                        أدخل البيانات واضغط على الحساب لعرض نطاق الشبكة والـ Broadcast.
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 7: TIPS -->
-            <div id="tab-tips" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">💡 دليل الأمن السيبراني المتقدم وأفضل الممارسات</h2>
-                    <div class="space-y-3 text-xs text-slate-300">
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <h3 class="font-bold text-emerald-400 mb-1">1. تعقيم المدخلات (Input Sanitization)</h3>
-                            <p class="text-slate-400 leading-relaxed">عدم الوثوق نهائياً بمدخلات المستخدم وتطبيق التحقق في الواجهة والخلفية لمنع ثغرات الحقن (SQLi & XSS).</p>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <h3 class="font-bold text-emerald-400 mb-1">2. أمان التوثيق وجلسات المستخدمين</h3>
-                            <p class="text-slate-400 leading-relaxed">تفضيل تخزين التوكنز في HttpOnly Cookies لمنع سرقتها عبر سكريبتات الطرف الثالث.</p>
-                        </div>
-                        <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800">
-                            <h3 class="font-bold text-emerald-400 mb-1">3. التشفير السليم بـ Hashing مع Salt</h3>
-                            <p class="text-slate-400 leading-relaxed">استخدام خوارزميات بطيئة وعالية الأمان مثل Argon2 أو Bcrypt لحفظ كلمات المرور بشكل مشفر.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 8: FAQ -->
-            <div id="tab-faq" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">❓ الأسئلة الشائعة (FAQ)</h2>
-                    <div class="space-y-3 text-xs">
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <h3 class="font-bold text-white mb-1">س: هل يتم حفظ بياناتي المدخلة على سيرفرات خارجية؟</h3>
-                            <p class="text-slate-400">ج: لا مطلقاً، جميع الأدوات تعمل بلغة JavaScript داخل متصفحك محلياً (Client-Side) لضمان أمان تام للخصوصية.</p>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
-                            <h3 class="font-bold text-white mb-1">س: كيف يمكنني تعديل بيانات البروفايل الخاص بي؟</h3>
-                            <p class="text-slate-400">ج: من خلال الانتقال إلى قسم "إعدادات الحساب والبروفايل" وتعديل اسمك ورابط جيت هاب وسيتم حفظها مباشرة في متصفحك.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 9: PROFILE -->
-            <div id="tab-profile" class="tab-content hidden space-y-4">
-                <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-bold text-emerald-400">⚙️ إعدادات الحساب والبروفايل المحلي</h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-xs text-slate-400 block mb-1">اسم المطور:</label>
-                            <input type="text" id="profile-name-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" value="Mina Rizkallah">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 block mb-1">رابط حساب GitHub الخاص بك:</label>
-                            <input type="text" id="profile-github-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" value="https://github.com/mina-rizkallah-deeb">
-                        </div>
-                        <button onclick="saveProfile()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all">حفظ التغييرات محلياً</button>
-                        <div class="pt-4 border-t border-slate-800">
-                            <a id="github-link-btn" href="https://github.com/mina-rizkallah-deeb" target="_blank" class="inline-flex items-center gap-2 text-xs text-cyan-400 hover:underline">
-                                🔗 زيارة مستودع GitHub الشخصي للمطور
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
     </div>
 
-    <!-- Bottom Navigation Bar for Mobile & Quick Access -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 bg-slate-900/95 border-t border-slate-800 py-2.5 px-4 flex justify-around items-center z-50 backdrop-blur-md">
-        <button onclick="switchTab('dashboard')" class="flex flex-col items-center text-slate-400 hover:text-emerald-400 text-[10px] gap-0.5">
-            <span class="text-sm">🏠</span>
-            <span>الرئيسية</span>
-        </button>
-        <button onclick="switchTab('base64')" class="flex flex-col items-center text-slate-400 hover:text-emerald-400 text-[10px] gap-0.5">
-            <span class="text-sm">🔄</span>
-            <span>أدوات</span>
-        </button>
-        <button onclick="switchTab('tips')" class="flex flex-col items-center text-slate-400 hover:text-emerald-400 text-[10px] gap-0.5">
-            <span class="text-sm">💡</span>
-            <span>نصائح</span>
-        </button>
-        <button onclick="switchTab('profile')" class="flex flex-col items-center text-slate-400 hover:text-emerald-400 text-[10px] gap-0.5">
-            <span class="text-sm">⚙️</span>
-            <span>حسابي</span>
-        </button>
-    </nav>
+    <!-- التطبيق الرئيسي -->
+    <div id="app-screen" class="flex flex-col min-h-screen hidden pb-20 md:pb-0">
+        
+        <!-- الشريط العلوي -->
+        <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 md:px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white p-1.5 rounded-lg bg-slate-800/50 text-sm">☰</button>
+                <div class="hidden sm:flex items-center gap-2">
+                    <div class="bg-emerald-500/10 border border-emerald-500/30 p-1.5 rounded-xl text-emerald-400 font-bold text-xs">🛡️</div>
+                    <span class="font-bold text-xs text-white">Deebka <span class="text-emerald-400">Suite</span></span>
+                </div>
+            </div>
 
-    <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500 mb-12 md:mb-0">
-        Deebka Hub | تم التطوير بواسطة <span id="footer-name" class="text-emerald-400 font-bold">Mina Rizkallah</span> 🚀
-    </footer>
+            <!-- العلامة وشريط البحث -->
+            <div class="flex items-center gap-4 flex-1 max-w-md mx-4">
+                <div class="text-sm md:text-base font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400">DEEBKA</div>
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-500 text-xs">🔍</span>
+                    <input type="text" id="global-search" oninput="filterTools(this.value)" placeholder="ابحث عن أداة..." class="w-full bg-slate-950 border border-slate-800 rounded-xl py-1.5 pr-9 pl-4 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 transition-all">
+                </div>
+            </div>
 
-    <!-- Script Logic -->
-    <script>
-        // Multi-language dictionary
-        const translations = {
-            ar: { welcome: "أهلاً بك مجدداً في Deebka Hub،", welcome_desc: "منصتك الاحترافية المدمجة تعمل الآن بأعلى كفاءة على السحابة. يمكنك اختيار أي أداة من الشريط الجانبي أو استخدام البحث السريع بالأعلى." },
-            en: { welcome: "Welcome back to Deebka Hub,", welcome_desc: "Your pro security & dev platform is running live on the cloud. Select any tool from the sidebar or search above." },
-            es: { welcome: "Bienvenido de nuevo a Deebka Hub,", welcome_desc: "Tu plataforma profesional está activa en la nube. Selecciona cualquier herramienta de la barra lateral." },
-            fr: { welcome: "Bienvenue sur Deebka Hub,", welcome_desc: "Votre plateforme pro fonctionne en direct sur le cloud. Sélectionnez un outil dans la barre latérale." },
-            it: { welcome: "Bentornato su Deebka Hub,", welcome_desc: "La tua piattaforma professionale è attiva sul cloud. Seleziona qualsiasi strumento dalla barra laterale." },
-            zh: { welcome: "欢迎回到 Deebka Hub，", welcome_desc: "您的专业开发与安全平台已在云端上线。请从侧边栏选择工具。" },
-            ja: { welcome: "Deebka Hub へようこそ、", welcome_desc: "プロフェッショナルな開発・セキュリティプラットフォームが稼働中です。" },
-            ko: { welcome: "Deebka Hub에 오신 것을 환영합니다,", welcome_desc: "전문가용 개발 및 보안 플랫폼이 클라우드에서 실행 중입니다." },
-            hi: { welcome: "Deebka Hub में आपका स्वागत है,", welcome_desc: "आपका प्रो डेवलपमेंट और सुरक्षा प्लेटफॉर्म क्लाउड पर लाइव है।" }
-        };
+            <div class="flex items-center gap-3">
+                <div onclick="switchTab('profile')" class="cursor-pointer flex items-center gap-2 bg-slate-800/80 hover:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 transition-all">
+                    <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center font-bold text-xs text-slate-950" id="nav-avatar">U</div>
+                    <span class="text-xs font-medium text-slate-200 hidden sm:inline" id="nav-username">المستخدم</span>
+                </div>
+            </div>
+        </header>
 
-        function changeLanguage(lang) {
-            document.documentElement.lang = lang;
-            document.documentElement.dir = (lang === 'ar' || lang === 'fa' || lang === 'ur') ? 'rtl' : 'ltr';
-            localStorage.setItem('dev_lang', lang);
-            if(translations[lang]) {
-                const wEl = document.querySelector('[data-i18n="welcome"]');
-                const dEl = document.querySelector('[data-i18n="welcome_desc"]');
-                if(wEl) wEl.innerHTML = `${translations[lang].welcome} <span id="dash-name" class="text-emerald-400">${localStorage.getItem('dev_username') || 'Mina'}</span> 👋`;
-                if(dEl) dEl.innerText = translations[lang].welcome_desc;
-            }
-        }
-
-        window.onload = function() {
-            let savedName = localStorage.getItem('dev_username');
-            let savedGithub = localStorage.getItem('dev_github');
-            let savedLang = localStorage.getItem('dev_lang') || 'ar';
+        <div class="flex flex-1 flex-col md:flex-row relative">
             
-            document.getElementById('lang-select').value = savedLang;
-            changeLanguage(savedLang);
+            <!-- الشريط الجانبي (القائمة) -->
+            <aside id="sidebar" class="w-64 bg-slate-900/90 border-e border-slate-800 p-4 flex flex-col gap-1.5 shrink-0 fixed md:static inset-y-0 right-0 z-40 transform translate-x-full md:translate-x-0 transition-transform duration-300 backdrop-blur-md overflow-y-auto">
+                <div class="flex justify-between items-center md:hidden mb-2 pb-2 border-b border-slate-800">
+                    <span class="font-bold text-emerald-400 text-xs">القائمة الرئيسية</span>
+                    <button onclick="toggleSidebar()" class="text-slate-400 text-sm">✕</button>
+                </div>
 
-            if(savedName) {
-                document.getElementById('nav-username').innerText = savedName;
-                document.getElementById('dash-name').innerText = savedName;
-                document.getElementById('footer-name').innerText = savedName;
-                document.getElementById('profile-name-input').value = savedName;
-                document.getElementById('nav-avatar').innerText = savedName.charAt(0).toUpperCase();
-            }
-            if(savedGithub) {
-                document.getElementById('profile-github-input').value = savedGithub;
-                document.getElementById('github-link-btn').href = savedGithub;
-            }
-        }
+                <!-- قائمة اللغات -->
+                <div class="mb-3 bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <label class="text-[10px] text-slate-400 block mb-1">🌍 لغة الواجهة:</label>
+                    <select id="lang-select" onchange="changeLanguage(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <option value="ar">العربية (Arabic)</option>
+                        <option value="en">English (إنجليزي)</option>
+                        <option value="es">Español (إسباني)</option>
+                        <option value="fr">Français (فرنسي)</option>
+                        <option value="it">Italiano (إيطالي)</option>
+                        <option value="zh">中文 (صيني)</option>
+                        <option value="ja">日本語 (ياباني)</option>
+                        <option value="ko">한국어 (كوري)</option>
+                        <option value="hi">हिन्दी (هندي)</option>
+                    </select>
+                </div>
 
-        function saveProfile() {
-            let name = document.getElementById('profile-name-input').value;
-            let github = document.getElementById('profile-github-input').value;
-            if(!name) return;
-            localStorage.setItem('dev_username', name);
-            localStorage.setItem('dev_github', github);
-            document.getElementById('nav-username').innerText = name;
-            document.getElementById('dash-name').innerText = name;
-            document.getElementById('footer-name').innerText = name;
-            document.getElementById('nav-avatar').innerText = name.charAt(0).toUpperCase();
-            document.getElementById('github-link-btn').href = github;
-            alert('تم حفظ البيانات والروابط بنجاح في متصفحك!');
-        }
+                <div class="space-y-1" id="tools-menu">
+                    <button onclick="switchTab('dashboard')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">📊 الرئيسية</button>
+                    <button onclick="switchTab('base64')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🔄 مشفر / مفكك Base64</button>
+                    <button onclick="switchTab('jwt')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🎫 محلل رموز JWT</button>
+                    <button onclick="switchTab('hasher')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🔒 مولد الـ SHA-256 Hash</button>
+                    <button onclick="switchTab('password')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🔑 فاحص ومولد كلمات السر</button>
+                    <button onclick="switchTab('jsonfmt')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">📋 منسق وفاحص JSON</button>
+                    <button onclick="switchTab('urlcoder')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🔗 مشفر / مفكك URL</button>
+                    <button onclick="switchTab('timestamp')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">⏱️ محول الـ Epoch Timestamp</button>
+                    <button onclick="switchTab('colorconv')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200">🎨 محول الألوان (HEX/RGB)</button>
+                    <button onclick="switchTab('profile')" class="sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200 mt-2">⚙️ البروفايل والإعدادات</button>
+                    
+                    <div class="pt-4 mt-4 border-t border-slate-800 space-y-1">
+                        <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-2 rounded-xl text-xs text-rose-400 hover:bg-rose-950/20 transition-all">🚪 تسجيل الخروج</button>
+                    </div>
+                </div>
+            </aside>
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            
-            document.querySelectorAll('.sidebar-btn').forEach(el => {
-                el.className = "sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all text-slate-400 hover:bg-slate-900 hover:text-slate-200";
-            });
-            const activeBtn = document.getElementById('btn-' + tabId);
-            if(activeBtn) {
-                activeBtn.className = "sidebar-btn tool-item w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-medium transition-all bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-            }
-            // Close mobile sidebar if open
-            document.getElementById('sidebar').classList.add('translate-x-full');
-        }
+            <!-- المحتوى والأدوات الفعلية -->
+            <main class="flex-1 p-4 md:p-8 max-w-5xl mx-auto w-full">
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('translate-x-full');
-        }
+                <!-- لوحة التحكم -->
+                <div id="tab-dashboard" class="tab-content space-y-6">
+                    <div class="bg-gradient-to-r from-emerald-950/50 via-slate-900 to-slate-900 border border-emerald-500/20 p-6 rounded-2xl shadow-xl">
+                        <h2 class="text-xl font-bold text-white mb-2">أهلاً بك، <span id="dash-username" class="text-emerald-400">مستخدم</span> 👋</h2>
+                        <p class="text-xs text-slate-400 leading-relaxed">جميع الأدوات التقنية والسيبرانية جاهزة وتعمل محلياً بالكامل داخل متصفحك بكفاءة عالية وسرعة فائقة.</p>
+                    </div>
+                </div>
 
-        function toggleNotifications() {
-            let drop = document.getElementById('notif-dropdown');
-            drop.classList.toggle('hidden');
-        }
+                <!-- أداة 1: Base64 -->
+                <div id="tab-base64" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🔄 مشفر ومفكك Base64 الاحترافي</h2>
+                        <textarea id="b64-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder="اكتب النص هنا للترميز أو فك التشفير..."></textarea>
+                        <div class="flex gap-2">
+                            <button onclick="b64Encode()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">تشفير (Encode)</button>
+                            <button onclick="b64Decode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-bold">فك التشفير (Decode)</button>
+                        </div>
+                    </div>
+                </div>
 
-        function filterTools(query) {
-            let q = query.toLowerCase();
-            let items = document.querySelectorAll('.tool-item');
-            items.forEach(item => {
-                if(item.innerText.toLowerCase().includes(q)) {
-                    item.style.display = "flex";
-                } else {
-                    item.style.display = "none";
-                }
-            });
-        }
+                <!-- أداة 2: JWT -->
+                <div id="tab-jwt" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🎫 محلل رموز JWT (JSON Web Token)</h2>
+                        <textarea id="jwt-input" oninput="parseJWT()" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder="الصق رمز JWT هنا..."></textarea>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                <span class="text-[10px] text-slate-500 block mb-1">Header:</span>
+                                <pre id="jwt-header" class="text-[11px] text-cyan-400 font-mono whitespace-pre-wrap">-</pre>
+                            </div>
+                            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                <span class="text-[10px] text-slate-500 block mb-1">Payload:</span>
+                                <pre id="jwt-payload" class="text-[11px] text-emerald-400 font-mono whitespace-pre-wrap">-</pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        function b64Encode() {
-            let val = document.getElementById('b64-text').value;
-            try { document.getElementById('b64-text').value = btoa(unescape(encodeURIComponent(val))); } catch(e) { alert('خطأ في التشفير'); }
-        }
-        function b64Decode() {
-            let val = document.getElementById('b64-text').value;
-            try { document.getElementById('b64-text').value = decodeURIComponent(escape(atob(val))); } catch(e) { alert('صيغة Base64 غير صالحة'); }
-        }
+                <!-- أداة 3: SHA-256 -->
+                <div id="tab-hasher" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🔒 مولد بصمات SHA-256</h2>
+                        <input type="text" id="hash-input" oninput="generateSHA256()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder="اكتب النص لتوليد الـ Hash...">
+                        <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
+                            <span class="text-[10px] text-slate-500 block mb-1">النتيجة:</span>
+                            <p id="hash-output" class="text-xs text-emerald-400 font-mono break-all select-all">-</p>
+                        </div>
+                    </div>
+                </div>
 
-        function decodeJWT() {
-            let token = document.getElementById('jwt-input').value.trim();
-            if(!token) { document.getElementById('jwt-header').innerText = "-"; document.getElementById('jwt-payload').innerText = "-"; return; }
-            try {
-                let parts = token.split('.');
-                if(parts.length !== 3) { throw new Error('Invalid format'); }
-                let header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/')));
-                let payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-                document.getElementById('jwt-header').innerText = JSON.stringify(header, null, 2);
-                document.getElementById('jwt-payload').innerText = JSON.stringify(payload, null, 2);
-            } catch(e) {
-                document.getElementById('jwt-header').innerText = "خطأ: الرمز غير صالح";
-                document.getElementById('jwt-payload').innerText = "-";
-            }
-        }
+                <!-- أداة 4: Password -->
+                <div id="tab-password" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🔑 فاحص ومولد كلمات السر الفورية</h2>
+                        <input type="password" id="pwd-input" oninput="checkPasswordStrength()" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-emerald-500" placeholder="أدخل كلمة مرور لفحص قوتها...">
+                        <div id="pwd-result" class="text-xs font-medium text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800">الرجاء إدخال كلمة المرور.</div>
+                        <button onclick="generateSecurePassword()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">توليد كلمة سر قوية وعشوائية</button>
+                        <div id="gen-pwd-box" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-cyan-400 select-all">-</div>
+                    </div>
+                </div>
 
-        async function generateHash() {
-            let text = document.getElementById('hash-input').value;
-            if(!text) { document.getElementById('hash-output').innerText = "-"; return; }
-            const msgBuffer = new TextEncoder().encode(text);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            document.getElementById('hash-output').innerText = hashHex;
-        }
+                <!-- أداة 5: JSON Formatter -->
+                <div id="tab-jsonfmt" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">📋 منسق وفاحص أكواد JSON</h2>
+                        <textarea id="json-input" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder='{"name": "Deebka"}'></textarea>
+                        <button onclick="formatJSON()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">تنسيق وتدقيق JSON</button>
+                        <pre id="json-output" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400 whitespace-pre-wrap">-</pre>
+                    </div>
+                </div>
 
-        function checkPassword() {
-            let pwd = document.getElementById('pwd-input').value;
-            let res = document.getElementById('pwd-strength');
-            if(pwd.length === 0) { res.innerText = "الرجاء إدخال كلمة مرور للتقييم الفوري."; res.className = "text-xs font-medium text-slate-400 bg-slate-950 p-3 rounded-xl border border-slate-800"; return; }
-            let score = 0;
-            if(pwd.length >= 8) score++;
-            if(/[A-Z]/.test(pwd)) score++;
-            if(/[0-9]/.test(pwd)) score++;
-            if(/[^A-Za-z0-9]/.test(pwd)) score++;
+                <!-- أداة 6: URL Encoder -->
+                <div id="tab-urlcoder" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🔗 مشفر ومفكك روابط URL</h2>
+                        <input type="text" id="url-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder="أدخل الرابط أو النص...">
+                        <div class="flex gap-2">
+                            <button onclick="urlEncode()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">تشفير URL</button>
+                            <button onclick="urlDecode()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-bold">فك تشفير URL</button>
+                        </div>
+                        <p id="url-output" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-cyan-400 break-all">-</p>
+                    </div>
+                </div>
 
-            if(score <= 2) {
-                res.innerHTML = "🔴 كلمة المرور ضعيفة جداً وسهلة الاختراق.";
-                res.className = "text-xs font-medium text-rose-400 bg-rose-950/20 p-3 rounded-xl border border-rose-900/50";
-            } else if(score === 3) {
-                res.innerHTML = "🟡 كلمة المرور متوسطة، يفضل إضافة رموز وأرقام.";
-                res.className = "text-xs font-medium text-amber-400 bg-amber-950/20 p-3 rounded-xl border border-amber-900/50";
-            } else {
-                res.innerHTML = "🟢 كلمة المرور قوية جداً وآمنة تماماً ضد هجمات التخمين!";
-                res.className = "text-xs font-medium text-emerald-400 bg-emerald-950/20 p-3 rounded-xl border border-emerald-900/50";
-            }
-        }
+                <!-- أداة 7: Timestamp -->
+                <div id="tab-timestamp" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">⏱️ محول التوقيت (Epoch / Unix Timestamp)</h2>
+                        <input type="text" id="ts-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" placeholder="اكتب رقم الـ Timestamp...">
+                        <button onclick="convertTimestamp()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">تحويل إلى تاريخ</button>
+                        <p id="ts-output" class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-emerald-400">-</p>
+                    </div>
+                </div>
 
-        function generateStrongPassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*!_-+=";
-            let pwd = "";
-            for(let i=0; i<16; i++) {
-                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            document.getElementById('gen-pwd-output').innerText = pwd;
-        }
-
-        function calculateSubnet() {
-            let ip = document.getElementById('ip-input').value;
-            let cidr = document.getElementById('cidr-input').value;
-            let resultBox = document.getElementById('subnet-result');
-            resultBox.innerHTML = `عنوان IP المدخل: ${ip} | CIDR: /${cidr}<br>حالة النطاق: نشط وآمن.<br>إجمالي المضيفين المتاحين في النطاق: ${Math.pow(2, 32 - cidr) - 2}`;
-        }
-    </script>
-</body>
-</html>
+                <!-- أداة 8: Color Converter -->
+                <div id="tab-colorconv" class="tab-content hidden space-y-4">
+                    <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-sm font-bold text-emerald-400">🎨 محول الألوان (HEX إلى RGB)</h2>
+                        <input type="text" id="color-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500" value="#10b981">
+                        <button onclick="convertColor()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold">تحويل اللون</button>
+                        <p id="color-output" class="bg-slate-950 p-3 rounded-xl border border-
