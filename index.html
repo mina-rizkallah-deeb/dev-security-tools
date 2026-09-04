@@ -1,633 +1,154 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="dark">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deeb Alex | Enterprise Security & Penetration Platform</title>
+    <title>CyberDeebka | Enterprise Security Suite</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        cyberDark: '#070b14',
-                        cyberCard: '#0f172a',
-                        cyberBorder: '#1e293b',
+                        cyberDark: '#0a0f1d',
+                        cyberCard: '#111827',
+                        cyberBorder: '#1f293d',
                         cyberGreen: '#00ff66',
-                        cyberBlue: '#00f0ff',
-                        cyberPurple: '#8b5cf6'
+                        cyberBlue: '#00e5ff'
                     }
                 }
             }
         }
     </script>
-    <style>
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: #070b14; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00ff66; }
-    </style>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Manifest Link -->
+    <link rel="manifest" href="manifest.json">
 </head>
-<body class="bg-cyberDark text-gray-100 font-sans antialiased pb-24 selection:bg-cyberGreen selection:text-black">
+<body class="bg-cyberDark text-gray-100 font-sans min-h-screen flex flex-col selection:bg-cyberGreen selection:text-black">
 
-    <!-- Top Enterprise Header -->
-    <header class="sticky top-0 z-40 bg-cyberCard/90 backdrop-blur-xl border-b border-cyberBorder px-4 py-3 flex justify-between items-center shadow-2xl">
+    <!-- Top Header Navbar -->
+    <header class="bg-cyberCard border-b border-cyberBorder sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center space-x-3 space-x-reverse">
-            <button onclick="toggleSidebar()" class="text-cyberGreen text-xl p-1.5 rounded-lg hover:bg-cyberBorder/50 transition focus:outline-none">
-                <i class="fa-solid fa-bars-staggered"></i>
+            <button onclick="toggleSidebar()" class="w-10 h-10 rounded-xl bg-cyberBorder/50 flex items-center justify-center text-cyberGreen hover:bg-cyberBorder transition">
+                <i class="fa-solid fa-bars text-base"></i>
             </button>
             <div class="flex items-center space-x-2 space-x-reverse">
-                <div class="w-8 h-8 rounded-lg bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen font-black text-sm shadow-lg shadow-cyberGreen/10">DA</div>
-                <h1 class="text-base font-black tracking-widest text-white">DEEB <span class="text-cyberGreen">ALEX</span></h1>
+                <div class="w-8 h-8 rounded-lg bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen">
+                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                </div>
+                <h1 class="text-sm font-black tracking-wide text-white">Cyber<span class="text-cyberGreen">Deebka</span></h1>
             </div>
         </div>
-        <div class="flex items-center space-x-3 space-x-reverse">
-            <div class="hidden sm:flex flex-col text-left">
-                <span id="headerUserName" class="text-xs font-bold text-gray-200">مـيـنا رزق الله</span>
-                <span class="text-[9px] text-cyberGreen font-mono">SEC-OP: ACTIVE</span>
-            </div>
-            <span id="userTierBadge" class="text-[10px] bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">Free Tier</span>
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyberBlue/20 to-cyberGreen/20 border border-cyberBorder flex items-center justify-center text-cyberBlue font-bold text-sm shadow-inner">MR</div>
+        <div class="flex items-center space-x-2 space-x-reverse">
+            <span class="text-[10px] bg-cyberGreen/10 text-cyberGreen border border-cyberGreen/30 px-2.5 py-1 rounded-full font-mono font-bold">PRO v4.8</span>
         </div>
     </header>
 
-    <!-- Professional Sidebar Drawer -->
-    <div id="sidebar" class="fixed inset-y-0 right-0 w-84 bg-[#0a0f1d] border-l border-cyberBorder z-50 transform translate-x-full transition-transform duration-300 ease-out flex flex-col justify-between shadow-2xl">
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside id="sidebar" class="fixed top-0 right-0 bottom-0 w-72 bg-cyberCard border-l border-cyberBorder z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5">
         <div>
-            <!-- Sidebar Header -->
-            <div class="p-5 border-b border-cyberBorder flex justify-between items-center bg-cyberCard/50">
-                <div class="flex items-center space-x-3 space-x-reverse">
-                    <div class="w-11 h-11 rounded-xl bg-cyberGreen/10 border border-cyberGreen/40 flex items-center justify-center text-cyberGreen text-lg font-black">DA</div>
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-cyberBorder">
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <div class="w-9 h-9 rounded-xl bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen">
+                        <i class="fa-solid fa-user-shield text-sm"></i>
+                    </div>
                     <div>
-                        <h3 class="font-bold text-white text-sm">منصة Deeb Alex</h3>
-                        <p class="text-[10px] text-gray-400 font-mono">v4.8.2-Enterprise</p>
+                        <h3 class="text-xs font-black text-white">مـيـنا رزق الله</h3>
+                        <span class="text-[10px] text-cyberGreen font-mono">Cyber Security Lead</span>
                     </div>
                 </div>
-                <button onclick="toggleSidebar()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-cyberBorder transition"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="toggleSidebar()" class="text-gray-400 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
             </div>
 
-            <!-- Profile & Wallet Widget -->
-            <div class="p-4 m-3 bg-cyberCard rounded-xl border border-cyberBorder shadow-inner">
-                <div class="flex justify-between items-center mb-2">
-                    <span class="text-xs text-gray-400">رصيد المحفظة الآمن:</span>
-                    <span class="text-cyberGreen font-mono font-bold text-sm" id="sidebarWallet">0.00 EGP</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-xs text-gray-400">حالة الترخيص:</span>
-                    <span class="text-yellow-400 text-xs font-semibold" id="sidebarStatus">مجاني القيود</span>
-                </div>
-            </div>
-
-            <!-- Navigation Links -->
-            <div class="px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-340px)]">
-                <a href="#" onclick="switchTab('profile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-4 py-2.5 rounded-xl text-gray-300 hover:bg-cyberBorder/60 hover:text-cyberBlue text-xs font-semibold transition">
-                    <i class="fa-solid fa-user-gear w-5 text-center text-sm"></i>
-                    <span>تعديل الملف الشخصي والأمان</span>
+            <nav class="space-y-1.5 text-xs">
+                <a href="#" onclick="switchTab('home'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberGreen transition">
+                    <i class="fa-solid fa-house w-5 text-center text-cyberGreen"></i>
+                    <span class="font-bold">الرئيسية وغرفة العمليات</span>
                 </a>
-                <a href="#" onclick="switchTab('stats'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-4 py-2.5 rounded-xl text-gray-300 hover:bg-cyberBorder/60 hover:text-cyberBlue text-xs font-semibold transition">
-                    <i class="fa-solid fa-chart-line w-5 text-center text-sm"></i>
-                    <span>إحصائيات الفحص وتتبع الطلبات</span>
+                <a href="#" onclick="switchTab('mobile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberBlue transition">
+                    <i class="fa-solid fa-mobile-screen w-5 text-center text-cyberBlue"></i>
+                    <span class="font-bold">أدوات الهاتف الميدانية</span>
                 </a>
-                <a href="#" onclick="switchTab('wallet'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-4 py-2.5 rounded-xl text-gray-300 hover:bg-cyberBorder/60 hover:text-cyberBlue text-xs font-semibold transition">
-                    <i class="fa-solid fa-wallet w-5 text-center text-sm"></i>
-                    <span>المحفظة وترقية الباقات</span>
+                <a href="#" onclick="switchTab('pc'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberGreen transition">
+                    <i class="fa-solid fa-desktop w-5 text-center text-cyberGreen"></i>
+                    <span class="font-bold">أدوات الكمبيوتر المتقدمة</span>
                 </a>
-
-                <!-- Language Selector -->
-                <div class="px-4 py-2.5">
-                    <label class="text-[11px] text-gray-400 block mb-1.5"><i class="fa-solid fa-globe ml-1 text-cyberBlue"></i> لغة الواجهة (Interface Language):</label>
-                    <select id="langSelect" class="w-full bg-cyberDark border border-cyberBorder text-xs rounded-xl p-2.5 text-white focus:outline-none focus:border-cyberBlue font-medium">
-                        <option value="ar">العربية (Arabic)</option>
-                        <option value="en">English (US)</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
-                        <option value="it">Italiano</option>
-                        <option value="zh">中文</option>
-                        <option value="ja">日本語</option>
-                        <option value="ko">한국어</option>
-                        <option value="hi">हिन्दी</option>
-                    </select>
-                </div>
-
-                <a href="#" onclick="switchTab('support'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-4 py-2.5 rounded-xl text-gray-300 hover:bg-cyberBorder/60 hover:text-cyberBlue text-xs font-semibold transition">
-                    <i class="fa-solid fa-headset w-5 text-center text-sm"></i>
-                    <span>الدعم الفني وغرفة العمليات</span>
+                <a href="#" onclick="switchTab('wallet'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-yellow-400 transition">
+                    <i class="fa-solid fa-wallet w-5 text-center text-yellow-400"></i>
+                    <span class="font-bold">محفظة الباقات والاشتراكات</span>
                 </a>
-                <a href="https://github.com/mina-rizkallah-deeb" target="_blank" class="flex items-center space-x-3 space-x-reverse px-4 py-2.5 rounded-xl text-gray-300 hover:bg-cyberBorder/60 hover:text-cyberGreen text-xs font-semibold transition">
-                    <i class="fa-brands fa-github w-5 text-center text-sm"></i>
-                    <span>مستودع المطور (GitHub)</span>
+                <a href="#" onclick="switchTab('stats'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-purple-400 transition">
+                    <i class="fa-solid fa-chart-line w-5 text-center text-purple-400"></i>
+                    <span class="font-bold">إحصائيات الاستخدام والنشاط</span>
                 </a>
-            </div>
+                <a href="#" onclick="switchTab('support'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyan-400 transition">
+                    <i class="fa-solid fa-headset w-5 text-center text-cyan-400"></i>
+                    <span class="font-bold">الدعم الفني وغرفة العمليات</span>
+                </a>
+                <a href="#" onclick="switchTab('profile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-gray-100 transition">
+                    <i class="fa-solid fa-user-gear w-5 text-center text-gray-400"></i>
+                    <span class="font-bold">إعدادات الحساب والأمان</span>
+                </a>
+            </nav>
         </div>
 
-        <!-- Sidebar Footer / Logout -->
-        <div class="p-4 border-t border-cyberBorder bg-cyberCard/30">
-            <button onclick="alert('تم قطع الجلسة الآمنة وتسجيل الخروج بنجاح.')" class="w-full bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500 hover:text-white py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 space-x-reverse shadow-lg">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span>إنهاء الجلسة (Logout)</span>
-            </button>
+        <div class="border-t border-cyberBorder pt-4 text-center">
+            <span class="text-[10px] text-gray-500 font-mono">CyberDeebka Suite © 2026</span>
         </div>
-    </div>
-    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 hidden transition-opacity"></div>
+    </aside>
 
-    <!-- Main Dynamic Content Workspace -->
-    <main id="mainContent" class="p-4 sm:p-6 max-w-5xl mx-auto min-h-[82vh]">
-        <!-- Content injected dynamically -->
+    <!-- Main Content Container -->
+    <main id="mainContent" class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 pb-24">
+        <!-- Dynamically populated by script.js -->
     </main>
 
-    <!-- Bottom Enterprise Navigation Bar -->
-    <nav class="fixed bottom-0 inset-x-0 bg-cyberCard/95 backdrop-blur-2xl border-t border-cyberBorder z-30 px-3 py-2 flex justify-around items-center shadow-2xl">
-        <button onclick="switchTab('pc')" id="nav-pc" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition py-1 px-3 rounded-xl">
-            <i class="fa-solid fa-desktop text-base mb-1"></i>
-            <span class="text-[10px] font-bold">كمبيوتر</span>
-        </button>
-        <button onclick="switchTab('mobile')" id="nav-mobile" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition py-1 px-3 rounded-xl">
-            <i class="fa-solid fa-mobile-screen text-base mb-1"></i>
-            <span class="text-[10px] font-bold">تليفون</span>
-        </button>
-        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-cyberGreen transition transform -translate-y-3">
-            <div class="w-12 h-12 rounded-2xl bg-cyberGreen/20 border-2 border-cyberGreen flex items-center justify-center shadow-xl shadow-cyberGreen/20">
-                <i class="fa-solid fa-shield-halved text-xl text-cyberGreen"></i>
+    <!-- Tool Modal Popup -->
+    <div id="toolModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cyberCard border border-cyberBorder rounded-2xl w-full max-w-lg p-5 shadow-2xl relative">
+            <div class="flex justify-between items-center pb-3 border-b border-cyberBorder mb-4">
+                <h3 id="modalToolTitle" class="text-xs font-black text-white flex items-center">تشغيل الأداة</h3>
+                <button onclick="closeToolModal()" class="text-gray-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
             </div>
-            <span class="text-[10px] font-black mt-1">الرئيسية</span>
+            <div id="modalToolBody" class="space-y-4">
+                <!-- Dynamic tool execution content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bg-cyberCard border-t border-cyberBorder fixed bottom-0 left-0 right-0 z-30 px-4 py-2.5 flex justify-around items-center shadow-lg">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-cyberGreen transition transform -translate-y-2">
+            <i class="fa-solid fa-house text-base mb-1"></i>
+            <span class="text-[10px] font-bold">الرئيسية</span>
         </button>
-        <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition py-1 px-3 rounded-xl">
+        <button onclick="switchTab('mobile')" id="nav-mobile" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition">
+            <i class="fa-solid fa-mobile-screen text-base mb-1"></i>
+            <span class="text-[10px] font-bold">الهاتف</span>
+        </button>
+        <button onclick="switchTab('pc')" id="nav-pc" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberGreen transition">
+            <i class="fa-solid fa-desktop text-base mb-1"></i>
+            <span class="text-[10px] font-bold">الكمبيوتر</span>
+        </button>
+        <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-btn flex flex-col items-center text-gray-400 hover:text-yellow-400 transition">
             <i class="fa-solid fa-wallet text-base mb-1"></i>
-            <span class="text-[10px] font-bold">المحفظة</span>
+            <span class="text-[10px] font-bold">الباقات</span>
         </button>
-        <button onclick="switchTab('support')" id="nav-support" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition py-1 px-3 rounded-xl">
+        <button onclick="switchTab('support')" id="nav-support" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyan-400 transition">
             <i class="fa-solid fa-headset text-base mb-1"></i>
             <span class="text-[10px] font-bold">الدعم</span>
         </button>
     </nav>
 
-    <!-- Tool Execution Modal -->
-    <div id="toolModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cyberCard border border-cyberBorder rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
-            <div class="flex justify-between items-center mb-4 border-b border-cyberBorder pb-3">
-                <h3 id="modalToolTitle" class="text-sm font-black text-white flex items-center">
-                    <i class="fa-solid fa-terminal text-cyberGreen ml-2"></i> تنفيذ أداة الفحص
-                </h3>
-                <button onclick="closeToolModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div id="modalToolBody" class="space-y-4">
-                <!-- Dynamic tool parameters input & output -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Core JavaScript Execution Engine -->
-    <script>
-        // Sidebar Toggle Handler
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            sidebar.classList.toggle('translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-
-        // Tool Database (30 Professional Tools with True Logic Categories)
-        const mobileTools = [
-            { id: 1, name: "IP & Network Inspector", type: "free", desc: "فحص وعرض تفاصيل عنوان الـ IP والشبكة الحالية عبر API حقيقي.", func: "runIpInspector" },
-            { id: 2, name: "Port Scanner (Lite)", type: "free", desc: "فحص البورتات الشائعة (80, 443, 22) للسيرفر المستهدف.", func: "runPortScanner" },
-            { id: 3, name: "SSL Certificate Checker", type: "free", desc: "فحص صلاحية وقوة شهادات الأمان SSL/TLS لأي موقع.", func: "runSslChecker" },
-            { id: 4, name: "DNS Lookup Tool", type: "free", desc: "استعلام شامل عن سجلات الـ DNS (A, MX, TXT, NS).", func: "runDnsLookup" },
-            { id: 5, name: "HTTP Headers Analyzer", type: "free", desc: "فحص ترويسات الأمان وكشف ثغرات الـ Headers.", func: "runHeadersAnalyzer" },
-            { id: 6, name: "Base64 Encoder / Decoder", type: "free", desc: "تحويل وفك تشفير النصوص والبيانات بسرعة فائقة.", func: "runBase64" },
-            { id: 7, name: "Ping & Latency Tester", type: "free", desc: "اختبار استجابة وسرعة الاتصال بالسيرفرات المستهدفة.", func: "runPing" },
-            { id: 8, name: "Whois Domain Lookup", type: "free", desc: "استخراج معلومات تسجيل النطاقات والمالكين رسمياً.", func: "runWhois" },
-            { id: 9, name: "Web Response Status", type: "free", desc: "فحص كود الاستجابة الفوري (200, 404, 500, etc.).", func: "runStatusChecker" },
-            { id: 10, name: "Phishing Deep Detector", type: "pro", desc: "فحص الروابط المشبوهة وتحليل إن كانت مدرجة بقوائم التصيد.", func: "runPhishing" },
-            { id: 11, name: "Sub-Domain Quick Finder", type: "pro", desc: "كشف النطاقات الفرعية السريعة للمواقع بدقة عالية.", func: "runSubdomain" },
-            { id: 12, name: "User-Agent Inspector", type: "pro", desc: "فحص وتحليل هويات المتصفحات والأجهزة المتصلة.", func: "runUserAgent" },
-            { id: 13, name: "Text AES Encryption", type: "pro", desc: "تشفير وفك ترميز النصوص العالية السرية بمعيار AES.", func: "runAes" },
-            { id: 14, name: "MAC Vendor Lookup", type: "pro", desc: "كشف مصنع كرت الشبكة من عنوان الـ MAC بدقة.", func: "runMac" },
-            { id: 15, name: "Network Packet Sniffer", type: "pro", desc: "تتبع وحزم التدفق الحي للبيانات عبر السيرفر.", func: "runSniffer" }
-        ];
-
-        const pcTools = [
-            { id: 101, name: "Basic SQLi Tester", type: "free", desc: "اختبار استجابة مدخلات النماذج لحقن قواعد البيانات.", func: "runSqli" },
-            { id: 102, name: "Simple XSS Verifier", type: "free", desc: "فحص ثغرات البرمجة النصية عبر المواقع (XSS).", func: "runXss" },
-            { id: 103, name: "Cookies Security Inspector", type: "free", desc: "تدقيق أمان ملفات تعريف الارتباط (HttpOnly, Secure).", func: "runCookies" },
-            { id: 104, name: "Webhook Debugger", type: "free", desc: "استقبال واختبار وتتبع طلبات الـ Webhooks بدقة.", func: "runWebhook" },
-            { id: 105, name: "WAF Detector", type: "free", desc: "كشف نوع جدار حماية تطبيقات الويب (WAF) المستخدم.", func: "runWaf" },
-            { id: 106, name: "JWT Decoder & Validator", type: "free", desc: "فك وتدقيق التوكنات الأمنية للمصادقة (JWT Tokens).", func: "runJwt" },
-            { id: 107, name: "Basic Header Security Audit", type: "free", desc: "مراجعة مبدئية لترويسات السيرفر والحماية.", func: "runHeaderAudit" },
-            { id: 108, name: "Light Load & Stress Tester", type: "free", desc: "اختبار تحمل مبدئي لخوادم الويب بالطلبات المتعددة.", func: "runStress" },
-            { id: 109, name: "Advanced Vuln Deep Scanner", type: "pro", desc: "فحص شامل لأخطر الثغرات البرمجية في السيرفرات.", func: "runVulnScan" },
-            { id: 110, name: "Subdomain Enumeration Suite", type: "pro", desc: "سحب وتحليل النطاقات الفرعية العميقة عبر واجهات قوية.", func: "runDeepSub" },
-            { id: 111, name: "Directory Fuzzing Engine", type: "pro", desc: "اكتشاف الملفات والمجلدات السرية المخفية في الويب.", func: "runFuzzing" },
-            { id: 112, name: "CORS Misconfiguration Auditor", type: "pro", desc: "فحص أخطاء إعدادات مشاركة الموارد عبر النطاقات.", func: "runCors" },
-            { id: 113, name: "JS Source Secret Extractor", type: "pro", desc: "استخراج مفاتيح الـ API المسربة بملفات الجافاسكريبت.", func: "runJsExtract" },
-            { id: 114, name: "Deep SSL Cipher Auditor", type: "pro", desc: "فحص خوارزميات التشفير الضعيفة للسيرفرات المشفرة.", func: "runDeepSsl" },
-            { id: 115, name: "API Endpoint Security Auditor", type: "pro", desc: "فحص حماية نقاط النهاية للـ APIs المتقدمة.", func: "runApiAudit" }
-        ];
-
-        // Track trial usages for pro tools in local memory
-        let toolTrials = JSON.parse(localStorage.getItem('deeb_trials') || '{}');
-
-        // Main Router & Tab Switcher
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-cyberGreen', 'transform', '-translate-y-3');
-                btn.classList.add('text-gray-400');
-            });
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if(activeNav) {
-                activeNav.classList.remove('text-gray-400');
-                activeNav.classList.add('text-cyberGreen', 'transform', '-translate-y-3');
-            }
-
-            const container = document.getElementById('mainContent');
-
-            if (tabId === 'home') {
-                container.innerHTML = `
-                    <!-- Hero Banner -->
-                    <div class="bg-gradient-to-br from-cyberCard via-[#111c33] to-cyberCard border border-cyberBorder rounded-2xl p-6 mb-6 shadow-2xl relative overflow-hidden">
-                        <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-cyberGreen/5 rounded-full blur-3xl"></div>
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <span class="text-[10px] bg-cyberGreen/10 text-cyberGreen border border-cyberGreen/30 px-3 py-1 rounded-full font-mono font-bold">SEC-OPS ENGINE v4.8</span>
-                                <h2 class="text-xl sm:text-2xl font-black text-white mt-2">منصة <span class="text-cyberGreen">Deeb Alex</span> السيبرانية</h2>
-                                <p class="text-xs text-gray-400 mt-1">المنظومة الاحترافية الأولى لتدقيق الأمان السيبراني واختبار الاختراق الأخلاقي.</p>
-                            </div>
-                            <div class="hidden sm:flex flex-col items-end">
-                                <span class="text-[10px] text-gray-400">حالة الخادم:</span>
-                                <span class="text-xs font-mono text-emerald-400 font-bold flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-1.5"></span> متصل ومؤمن</span>
-                            </div>
-                        </div>
-
-                        <!-- Instant Search Bar -->
-                        <div class="relative mb-5">
-                            <i class="fa-solid fa-magnifying-glass absolute right-4 top-4 text-gray-400 text-sm"></i>
-                            <input type="text" id="globalSearch" oninput="filterTools(this.value)" placeholder="ابحث السريع عن أي أداة فحص سيبراني..." class="w-full bg-cyberDark border border-cyberBorder rounded-xl px-4 py-3.5 pr-11 text-xs text-white focus:outline-none focus:border-cyberBlue shadow-inner">
-                        </div>
-
-                        <!-- VPN Control Widget -->
-                        <div class="bg-cyberDark/90 border border-cyberBorder rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-                            <div class="flex items-center space-x-3 space-x-reverse">
-                                <div class="w-11 h-11 rounded-xl bg-cyberBlue/10 border border-cyberBlue/30 flex items-center justify-center text-cyberBlue text-lg">
-                                    <i class="fa-solid fa-shield-dog"></i>
-                                </div>
-                                <div>
-                                    <div class="flex items-center space-x-2 space-x-reverse">
-                                        <h4 class="text-xs font-bold text-white">نفق التشفير السريع (VPN Tunnel)</h4>
-                                        <span id="vpnStatusLabel" class="text-[9px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded font-mono">متوقف</span>
-                                    </div>
-                                    <p class="text-[10px] text-gray-400 mt-0.5">تشفير طلبات الفحص وإخفاء الهوية الرقمية بالكامل.</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <select id="vpnCountry" class="bg-cyberCard border border-cyberBorder text-xs text-gray-300 rounded-lg p-2 focus:outline-none focus:border-cyberBlue">
-                                    <option value="de">🇩🇪 ألمانيا (Frankfurt)</option>
-                                    <option value="us">🇺🇸 أمريكا (New York)</option>
-                                    <option value="nl">🇳🇱 هولندا (Amsterdam)</option>
-                                </select>
-                                <button onclick="toggleVpn()" id="vpnToggleBtn" class="bg-cyberBorder hover:bg-cyberBlue hover:text-black text-gray-200 px-4 py-2 rounded-lg text-xs font-bold transition shadow-md whitespace-nowrap">
-                                    تفعيل التشفير
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subscription Upgrade Card -->
-                    <div class="bg-gradient-to-r from-purple-950/40 via-blue-950/30 to-cyberCard border border-purple-500/30 rounded-2xl p-5 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 shadow-xl">
-                        <div>
-                            <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full font-bold">ترقية PRO VIP</span>
-                            <h3 class="text-sm font-black text-white mt-1.5">افتح كافة الأدوات الـ 30 بدون أي قيود أو إعلانات</h3>
-                            <p class="text-xs text-gray-300 mt-0.5">تشغيل متعدد المهام، نفق VPN خارجي متقدم، ودعم فني خاص.</p>
-                        </div>
-                        <button onclick="switchTab('wallet')" class="bg-cyberGreen text-black font-black text-xs px-5 py-3 rounded-xl hover:bg-emerald-400 transition shadow-lg shadow-cyberGreen/20 whitespace-nowrap">
-                            الترقية الفورية (250 EGP)
-                        </button>
-                    </div>
-
-                    <!-- Quick Navigation Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div onclick="switchTab('mobile')" class="bg-cyberCard border border-cyberBorder hover:border-cyberBlue p-5 rounded-2xl cursor-pointer transition group shadow-lg">
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="w-10 h-10 rounded-xl bg-cyberBlue/10 border border-cyberBlue/30 flex items-center justify-center text-cyberBlue text-lg group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-mobile-screen"></i>
-                                </div>
-                                <span class="text-[10px] font-mono text-cyberBlue font-bold bg-cyberBlue/10 px-2.5 py-1 rounded-full">15 أداة</span>
-                            </div>
-                            <h4 class="text-sm font-bold text-white">أدوات الهاتف الميدانية</h4>
-                            <p class="text-[11px] text-gray-400 mt-1">أدوات خفيفة وسريعة لفحص الشبكات والروابط فوريأ من الهاتف.</p>
-                        </div>
-                        <div onclick="switchTab('pc')" class="bg-cyberCard border border-cyberBorder hover:border-cyberGreen p-5 rounded-2xl cursor-pointer transition group shadow-lg">
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="w-10 h-10 rounded-xl bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen text-lg group-hover:scale-110 transition">
-                                    <i class="fa-solid fa-desktop"></i>
-                                </div>
-                                <span class="text-[10px] font-mono text-cyberGreen font-bold bg-cyberGreen/10 px-2.5 py-1 rounded-full">15 أداة</span>
-                            </div>
-                            <h4 class="text-sm font-bold text-white">أدوات الكمبيوتر المتقدمة</h4>
-                            <p class="text-[11px] text-gray-400 mt-1">فحص عميق للثغرات البرمجية، السيرفرات، واختبارات الأمان.</p>
-                        </div>
-                    </div>
-                `;
-            } else if (tabId === 'mobile') {
-                renderToolList('أدوات الهاتف الميدانية', mobileTools);
-            } else if (tabId === 'pc') {
-                renderToolList('أدوات الكمبيوتر المتقدمة', pcTools);
-            } else if (tabId === 'wallet') {
-                container.innerHTML = `
-                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 shadow-2xl">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-6">
-                            <div class="w-10 h-10 rounded-xl bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen text-lg">
-                                <i class="fa-solid fa-wallet"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-black text-white">محفظة Deeb Alex والاشتراكات الذكية</h3>
-                                <p class="text-xs text-gray-400">إدارة الرصيد، الشحن الفوري، وتفعيل باقات البريميوم.</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-cyberDark p-5 rounded-xl border border-cyberBorder mb-6 flex justify-between items-center shadow-inner">
-                            <div>
-                                <span class="text-xs text-gray-400 block mb-1">الرصيد المتاح الحالي:</span>
-                                <span class="text-2xl font-mono font-black text-cyberGreen">0.00 <span class="text-xs text-gray-400">EGP</span></span>
-                            </div>
-                            <span class="text-xs bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 px-3.5 py-1.5 rounded-full font-bold">الحساب مجاني (Free)</span>
-                        </div>
-
-                        <h4 class="text-xs font-bold text-gray-300 mb-3 uppercase tracking-wider">اختر الباقة الاحترافية المناسبة:</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                            <div class="bg-cyberDark border border-cyberBorder p-5 rounded-2xl relative hover:border-cyberGreen transition">
-                                <span class="text-[10px] bg-cyberGreen/20 text-cyberGreen border border-cyberGreen/30 px-2.5 py-0.5 rounded-full font-bold">الباقة الشهرية الأكثر طلباً</span>
-                                <div class="text-xl font-mono font-black text-white mt-3">250 جنيه <span class="text-xs text-gray-400 font-normal">/ شهرياً</span></div>
-                                <p class="text-xs text-gray-400 mt-2">وصول كامل ومفتوح لجميع الأدوات الـ 30، بدون إعلانات نهائياً، ونفق VPN متقدم.</p>
-                                <button onclick="processCheckout('monthly')" class="w-full mt-4 bg-cyberGreen text-black font-bold text-xs py-3 rounded-xl hover:bg-emerald-400 transition shadow-lg shadow-cyberGreen/10">اشتراك فوري آمن</button>
-                            </div>
-                            <div class="bg-cyberDark border border-purple-500/40 p-5 rounded-2xl relative hover:border-purple-400 transition">
-                                <span class="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2.5 py-0.5 rounded-full font-bold">الباقة السنوية (توفير شهرين)</span>
-                                <div class="text-xl font-mono font-black text-white mt-3">$49.99 <span class="text-xs text-gray-400 font-normal">/ سنوياً</span></div>
-                                <p class="text-xs text-gray-400 mt-2">القيمة الأفضل لمحترفي الأمن السيبراني وشركات التدقيق الأمني.</p>
-                                <button onclick="processCheckout('annual')" class="w-full mt-4 bg-purple-600 text-white font-bold text-xs py-3 rounded-xl hover:bg-purple-500 transition shadow-lg shadow-purple-600/20">اشتراك سنوي VIP</button>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-cyberBorder pt-5">
-                            <h4 class="text-xs font-bold text-gray-300 mb-3 uppercase tracking-wider">وسائل الدفع المدعومة (أتمتة كاملة + تدقيق بـ 3 دقائق):</h4>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <div class="bg-cyberDark border border-cyberBorder p-3 rounded-xl text-center text-xs text-gray-300 font-semibold"><i class="fa-solid fa-mobile-button text-red-400 block text-base mb-1"></i> فودافون كاش</div>
-                                <div class="bg-cyberDark border border-cyberBorder p-3 rounded-xl text-center text-xs text-gray-300 font-semibold"><i class="fa-brands fa-cc-visa text-blue-400 block text-base mb-1"></i> Visa / MC</div>
-                                <div class="bg-cyberDark border border-cyberBorder p-3 rounded-xl text-center text-xs text-gray-300 font-semibold"><i class="fa-brands fa-paypal text-cyan-400 block text-base mb-1"></i> PayPal</div>
-                                <div class="bg-cyberDark border border-cyberBorder p-3 rounded-xl text-center text-xs text-gray-300 font-semibold"><i class="fa-solid fa-coins text-yellow-400 block text-base mb-1"></i> USDT (TRC20)</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (tabId === 'support') {
-                container.innerHTML = `
-                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 shadow-2xl">
-                        <div class="flex items-center space-x-3 space-x-reverse mb-4">
-                            <div class="w-10 h-10 rounded-xl bg-cyberBlue/10 border border-cyberBlue/30 flex items-center justify-center text-cyberBlue text-lg">
-                                <i class="fa-solid fa-headset"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-black text-white">غرفة العمليات والدعم الفني المباشر</h3>
-                                <p class="text-xs text-gray-400">تواصل فوري مع مهندسي الأمان والدعم بالمنصة.</p>
-                            </div>
-                        </div>
-                        <div class="bg-cyberDark h-72 rounded-xl border border-cyberBorder p-4 mb-4 flex flex-col justify-end shadow-inner overflow-y-auto">
-                            <div class="bg-cyberBorder/60 p-3 rounded-xl text-xs text-gray-200 max-w-[85%] mb-2">
-                                أهلاً بك يا مينا في الدعم الفني لـ Deeb Alex. كافة أنظمة الفحص والنفق السيبراني تعمل بكفاءة تامة. كيف يمكننا مساعدتك اليوم؟
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="text" placeholder="اكتب استفسارك أو مشكلتك التقنية..." class="flex-1 bg-cyberDark border border-cyberBorder rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyberBlue">
-                            <button onclick="alert('تم إرسال رسالتك لغرفة العمليات بنجاح.')" class="bg-cyberBlue text-black font-bold text-xs px-5 py-3 rounded-xl hover:bg-cyan-400 transition shadow-lg">إرسال</button>
-                        </div>
-                    </div>
-                `;
-            } else if (tabId === 'profile') {
-                container.innerHTML = `
-                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 shadow-2xl">
-                        <h3 class="text-sm font-black text-white mb-4 flex items-center"><i class="fa-solid fa-user-gear text-cyberGreen ml-2"></i> تعديل الملف الشخصي وإعدادات الأمان</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="text-xs text-gray-400 block mb-1">اسم المستخدم:</label>
-                                <input type="text" value="مـيـنا رزق الله" class="w-full bg-cyberDark border border-cyberBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyberBlue">
-                            </div>
-                            <div>
-                                <label class="text-xs text-gray-400 block mb-1">البريد الإلكتروني للتوثيق:</label>
-                                <input type="email" value="mina@deebalex.sec" class="w-full bg-cyberDark border border-cyberBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyberBlue">
-                            </div>
-                            <div>
-                                <label class="text-xs text-gray-400 block mb-1">كلمة المرور الجديدة:</label>
-                                <input type="password" placeholder="أدخل كلمة مرور قوية ومعقدة" class="w-full bg-cyberDark border border-cyberBorder rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyberBlue">
-                            </div>
-                            <button onclick="alert('تم حفظ التعديلات وتحديث سجل الأمان بنجاح.')" class="w-full bg-cyberGreen text-black font-bold text-xs py-3 rounded-xl hover:bg-emerald-400 transition shadow-lg">حفظ التغييرات</button>
-                        </div>
-                    </div>
-                `;
-            } else if (tabId === 'stats') {
-                container.innerHTML = `
-                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-6 shadow-2xl">
-                        <h3 class="text-sm font-black text-white mb-4 flex items-center"><i class="fa-solid fa-chart-line text-cyberBlue ml-2"></i> إحصائيات الاستخدام وسجل الفحص</h3>
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-cyberDark p-4 rounded-xl border border-cyberBorder text-center">
-                                <span class="text-[11px] text-gray-400 block mb-1">الأدوات المستخدِمة</span>
-                                <span class="text-xl font-mono font-bold text-white">14 أداة</span>
-                            </div>
-                            <div class="bg-cyberDark p-4 rounded-xl border border-cyberBorder text-center">
-                                <span class="text-[11px] text-gray-400 block mb-1">إجمالي عمليات الفحص</span>
-                                <span class="text-xl font-mono font-bold text-cyberGreen">64 عملية</span>
-                            </div>
-                        </div>
-                        <h4 class="text-xs font-bold text-gray-300 mb-3 uppercase tracking-wider">سجل النشاطات الأخيرة:</h4>
-                        <div class="space-y-2 text-xs">
-                            <div class="bg-cyberDark p-3 rounded-xl border border-cyberBorder flex justify-between items-center">
-                                <span class="text-gray-300">فحص عنوان IP & Network Inspector</span>
-                                <span class="text-[10px] text-emerald-400 font-mono">منذ 5 دقائق</span>
-                            </div>
-                            <div class="bg-cyberDark p-3 rounded-xl border border-cyberBorder flex justify-between items-center">
-                                <span class="text-gray-300">استعلام DNS Lookup Tool</span>
-                                <span class="text-[10px] text-emerald-400 font-mono">منذ ساعة</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Render Tool Lists Function with Trial Logic
-        function renderToolList(title, toolsArray) {
-            const container = document.getElementById('mainContent');
-            let html = `
-                <div class="mb-5">
-                    <h2 class="text-base font-black text-white mb-1 flex items-center"><i class="fa-solid fa-cubes text-cyberBlue ml-2"></i> ${title}</h2>
-                    <p class="text-xs text-gray-400">اختر الأداة المطلوبة لبدء الفحص السيبراني الفوري عبر خوادم المنصة الآمنة.</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="toolsGrid">
-            `;
-
-            toolsArray.forEach(tool => {
-                const isPro = tool.type === 'pro';
-                const trialsUsed = toolTrials[tool.name] || 0;
-                const trialsLeft = Math.max(0, 2 - trialsUsed);
-
-                html += `
-                    <div class="bg-cyberCard border border-cyberBorder rounded-2xl p-4 flex flex-col justify-between hover:border-gray-600 transition shadow-lg">
-                        <div>
-                            <div class="flex justify-between items-center mb-2">
-                                <h3 class="text-xs font-black text-white">${tool.name}</h3>
-                                <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${isPro ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'}">
-                                    ${isPro ? `PRO (باقي ${trialsLeft} تجارب)` : 'مجاني (Free)'}
-                                </span>
-                            </div>
-                            <p class="text-[11px] text-gray-400 mb-4 leading-relaxed">${tool.desc}</p>
-                        </div>
-                        <button onclick="executeTool('${tool.name}', '${tool.type}', '${tool.func}')" class="w-full bg-cyberDark border border-cyberBorder text-xs text-gray-200 py-2.5 rounded-xl hover:bg-cyberBlue hover:text-black font-bold transition flex items-center justify-center space-x-2 space-x-reverse shadow-md">
-                            <i class="fa-solid fa-play text-[10px]"></i>
-                            <span>تشغيل الأداة فوري</span>
-                        </button>
-                    </div>
-                `;
-            });
-
-            html += `</div>`;
-            container.innerHTML = html;
-        }
-
-        // Tool Execution Logic with Trial Check
-        function executeTool(toolName, type, funcName) {
-            if (type === 'pro') {
-                if (!toolTrials[toolName]) toolTrials[toolName] = 0;
-                if (toolTrials[toolName] >= 2) {
-                    alert(`عذراً، لقد استنفذت الـ (مرتين) تجربة المجانية لأداة "${toolName}". يرجى ترقية حسابك للباقة الاحترافية لفتحها بلا حدود.`);
-                    switchTab('wallet');
-                    return;
-                }
-                toolTrials[toolName]++;
-                localStorage.setItem('deeb_trials', JSON.stringify(toolTrials));
-            }
-
-            // Open Modal and run tool function
-            openToolModal(toolName);
-            if (typeof window[funcName] === 'function') {
-                window[funcName]();
-            } else {
-                runGenericToolMock(toolName);
-            }
-        }
-
-        // Modal Handlers
-        function openToolModal(title) {
-            document.getElementById('modalToolTitle').innerHTML = `<i class="fa-solid fa-terminal text-cyberGreen ml-2"></i> تشغيل: ${title}`;
-            document.getElementById('toolModal').classList.remove('hidden');
-        }
-
-        function closeToolModal() {
-            document.getElementById('toolModal').classList.add('hidden');
-        }
-
-        // Specific Real Function Examples
-        async function runIpInspector() {
-            const body = document.getElementById('modalToolBody');
-            body.innerHTML = `<p class="text-xs text-gray-400 animate-pulse">جاري جلب تفاصيل الـ IP عبر خوادم الفحص...</p>`;
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                const data = await res.json();
-                body.innerHTML = `
-                    <div class="bg-cyberDark p-4 rounded-xl border border-cyberBorder font-mono text-xs space-y-2 text-cyberGreen">
-                        <p>IP Address: ${data.ip}</p>
-                        <p>Country: ${data.country_name} (${data.country_code})</p>
-                        <p>City: ${data.city}</p>
-                        <p>ISP: ${data.org}</p>
-                        <p>Timezone: ${data.timezone}</p>
-                    </div>
-                    <button onclick="closeToolModal()" class="w-full bg-cyberGreen text-black font-bold text-xs py-2.5 rounded-xl">إغلاق النتائج</button>
-                `;
-            } catch (e) {
-                body.innerHTML = `<p class="text-xs text-red-400">فشل الاتصال بخدمة الـ IP. تأكد من اتصال الإنترنت.</p>`;
-            }
-        }
-
-        function runBase64() {
-            const body = document.getElementById('modalToolBody');
-            body.innerHTML = `
-                <div>
-                    <label class="text-xs text-gray-400 block mb-1">أدخل النص للترميز أو فك التشفير:</label>
-                    <textarea id="b64Input" class="w-full bg-cyberDark border border-cyberBorder rounded-xl p-3 text-xs text-white h-20 focus:outline-none focus:border-cyberBlue mb-3" placeholder="اكتب النص هنا..."></textarea>
-                    <div class="flex gap-2">
-                        <button onclick="doB64Encode()" class="flex-1 bg-cyberBlue text-black font-bold text-xs py-2.5 rounded-xl">ترميز (Encode)</button>
-                        <button onclick="doB64Decode()" class="flex-1 bg-cyberGreen text-black font-bold text-xs py-2.5 rounded-xl">فك (Decode)</button>
-                    </div>
-                    <div id="b64Result" class="mt-3 bg-cyberDark p-3 rounded-xl border border-cyberBorder text-xs font-mono text-cyberGreen min-h-[40px]">النتيجة ستظهر هنا...</div>
-                </div>
-            `;
-        }
-
-        function doB64Encode() {
-            const val = document.getElementById('b64Input').value;
-            try {
-                document.getElementById('b64Result').innerText = btoa(unescape(encodeURIComponent(val)));
-            } catch(e) { document.getElementById('b64Result').innerText = "خطأ في الترميز."; }
-        }
-
-        function doB64Decode() {
-            const val = document.getElementById('b64Input').value;
-            try {
-                document.getElementById('b64Result').innerText = decodeURIComponent(escape(atob(val)));
-            } catch(e) { document.getElementById('b64Result').innerText = "خطأ: النص ليس Base64 صحيح."; }
-        }
-
-        function runGenericToolMock(name) {
-            const body = document.getElementById('modalToolBody');
-            body.innerHTML = `
-                <div class="space-y-3">
-                    <p class="text-xs text-gray-300">أداة فحص نشطة: <strong class="text-cyberGreen">${name}</strong></p>
-                    <div class="bg-cyberDark p-4 rounded-xl border border-cyberBorder font-mono text-[11px] text-gray-300 space-y-1.5">
-                        <p class="text-cyberBlue">[+] Initializing security handshake...</p>
-                        <p>[+] Target verification completed successfully.</p>
-                        <p class="text-cyberGreen">[✓] Analysis finished with 0 critical errors found.</p>
-                    </div>
-                    <button onclick="closeToolModal()" class="w-full bg-cyberGreen text-black font-bold text-xs py-2.5 rounded-xl">تم الانتهاء</button>
-                </div>
-            `;
-        }
-
-        // VPN Toggle Handler
-        function toggleVpn() {
-            const btn = document.getElementById('vpnToggleBtn');
-            const label = document.getElementById('vpnStatusLabel');
-            const country = document.getElementById('vpnCountry').value;
-            if (btn.innerText.includes('تفعيل')) {
-                btn.innerText = 'إيقاف التشفير';
-                btn.classList.remove('bg-cyberBorder', 'hover:bg-cyberBlue');
-                btn.classList.add('bg-red-500', 'text-white');
-                label.innerText = `متصل (${country.toUpperCase()})`;
-                label.className = "text-[9px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-mono font-bold";
-                alert(`تم تفعيل نفق التشفير السيبراني عبر خادم (${country.toUpperCase()}) بنجاح.`);
-            } else {
-                btn.innerText = 'تفعيل التشفير';
-                btn.classList.remove('bg-red-500', 'text-white');
-                btn.classList.add('bg-cyberBorder', 'hover:bg-cyberBlue');
-                label.innerText = 'متوقف';
-                label.className = "text-[9px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded font-mono";
-                alert('تم قطع نفق التشفير والعودة للاتصال المباشر.');
-            }
-        }
-
-        function processCheckout(plan) {
-            alert(`جاري توجيهك إلى بوابة الدفع الآمنة لباقة (${plan === 'monthly' ? 'الشهرية 250 EGP' : 'السنوية $49.99'})... المؤقت الآمن (3 دقائق) قيد التشغيل.`);
-        }
-
-        function filterTools(query) {
-            // Instant filter logic hook if needed
-        }
-
-        // Default Load Home
-        window.onload = function() {
-            switchTab('home');
-        };
-    </script>
+    <!-- External JavaScript Link -->
+    <script src="script.js"></script>
 </body>
 </html>
