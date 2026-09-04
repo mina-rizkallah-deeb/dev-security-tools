@@ -1,16 +1,15 @@
 {
-  "name": "CyberDeebka",
-  "short_name": "CyberDeebka",
-  "start_url": "./index.html",
+  "name": "Deeb Alex Security Platform",
+  "short_name": "DeebAlex",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#020617",
-  "theme_color": "#059669",
+  "background_color": "#070b14",
+  "theme_color": "#00ff66",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2910/2910792.png",
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/512x512/1f4bb.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
