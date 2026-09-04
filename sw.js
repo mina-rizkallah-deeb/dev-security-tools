@@ -1,15 +1,21 @@
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open('deeb-alex-v1').then((cache) => {
-      return cache.addAll(['/', '/index.html']);
-    })
+const CACHE_NAME = 'cyberdeebka-v4.8';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/script.js',
+  '/manifest.json'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
   );
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
-    })
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
   );
 });
