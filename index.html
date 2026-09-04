@@ -11,11 +11,12 @@
             theme: {
                 extend: {
                     colors: {
-                        cyberDark: '#0a0f1d',
-                        cyberCard: '#111827',
-                        cyberBorder: '#1f293d',
-                        cyberGreen: '#00ff66',
-                        cyberBlue: '#00e5ff'
+                        enterpriseDark: '#070a13',
+                        enterpriseCard: '#0f172a',
+                        enterpriseBorder: '#1e293b',
+                        enterpriseCyan: '#06b6d4',
+                        enterpriseEmerald: '#10b981',
+                        enterpriseGold: '#f59e0b'
                     }
                 }
             }
@@ -23,43 +24,83 @@
     </script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Manifest Link -->
     <link rel="manifest" href="manifest.json">
 </head>
-<body class="bg-cyberDark text-gray-100 font-sans min-h-screen flex flex-col selection:bg-cyberGreen selection:text-black">
+<body class="bg-enterpriseDark text-gray-100 font-sans min-h-screen flex flex-col selection:bg-enterpriseCyan selection:text-black">
 
-    <!-- Top Header Navbar -->
-    <header class="bg-cyberCard border-b border-cyberBorder sticky top-0 z-40 px-4 py-3 flex justify-between items-center shadow-md">
+    <!-- Auth / Onboarding Modal (Appears on First Launch if not logged in) -->
+    <div id="authModal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-enterpriseCyan/10 border border-enterpriseCyan/30 rounded-2xl mx-auto flex items-center justify-center text-enterpriseCyan text-2xl mb-3 shadow-lg">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <h2 class="text-lg font-black text-white">تسجيل الدخول وتأكيد الملكية</h2>
+                <p class="text-xs text-gray-400 mt-1">أدخل بياناتك الشخصية لتفعيل الحساب وحفظ ملكيتك لتحويلات الأرباح والمدفوعات.</p>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">الاسم الكامل:</label>
+                    <input type="text" id="authName" required placeholder="مثال: مينا رزق الله" value="مينا رزق الله" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">البريد الإلكتروني المؤسسي:</label>
+                    <input type="email" id="authEmail" required placeholder="name@company.sec" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">كلمة المرور:</label>
+                    <input type="password" id="authPass" required placeholder="••••••••••••" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
+                </div>
+                <div>
+                    <label class="block text-gray-400 mb-1 font-semibold">رقم المحفظة / فودافون كاش (للتحويلات المالية):</label>
+                    <input type="text" id="authWallet" required placeholder="010xxxxxxxx" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
+                </div>
+                <button type="submit" class="w-full bg-enterpriseCyan text-black font-black py-3.5 rounded-xl hover:bg-cyan-400 transition shadow-lg shadow-enterpriseCyan/20 mt-2">
+                    حفظ البيانات وبدء التشغيل الآمن
+                </button>
+            </form>
+
+            <div class="mt-4 pt-4 border-t border-enterpriseBorder text-center">
+                <button onclick="simulateGoogleLogin()" class="w-full bg-enterpriseDark border border-enterpriseBorder text-gray-300 font-semibold py-3 rounded-xl hover:bg-enterpriseBorder transition flex items-center justify-center space-x-2 space-x-reverse">
+                    <i class="fa-brands fa-google text-red-400"></i>
+                    <span>المتابعة باستخدام حساب Google الرسمي</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Corporate Header -->
+    <header class="bg-enterpriseCard border-b border-enterpriseBorder sticky top-0 z-30 px-4 py-3 flex justify-between items-center shadow-md">
         <div class="flex items-center space-x-3 space-x-reverse">
-            <button onclick="toggleSidebar()" class="w-10 h-10 rounded-xl bg-cyberBorder/50 flex items-center justify-center text-cyberGreen hover:bg-cyberBorder transition">
+            <button onclick="toggleSidebar()" class="w-10 h-10 rounded-xl bg-enterpriseBorder/50 flex items-center justify-center text-enterpriseCyan hover:bg-enterpriseBorder transition">
                 <i class="fa-solid fa-bars text-base"></i>
             </button>
             <div class="flex items-center space-x-2 space-x-reverse">
-                <div class="w-8 h-8 rounded-lg bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen">
-                    <i class="fa-solid fa-shield-halved text-sm"></i>
+                <div class="w-8 h-8 rounded-lg bg-enterpriseCyan/10 border border-enterpriseCyan/30 flex items-center justify-center text-enterpriseCyan">
+                    <i class="fa-solid fa-shield-screen text-sm"></i>
                 </div>
-                <h1 class="text-sm font-black tracking-wide text-white">Cyber<span class="text-cyberGreen">Deebka</span></h1>
+                <h1 class="text-sm font-black tracking-wide text-white">Cyber<span class="text-enterpriseCyan">Deebka</span> <span class="text-[10px] text-gray-400 font-normal">Enterprise</span></h1>
             </div>
         </div>
         <div class="flex items-center space-x-2 space-x-reverse">
-            <span class="text-[10px] bg-cyberGreen/10 text-cyberGreen border border-cyberGreen/30 px-2.5 py-1 rounded-full font-mono font-bold">PRO v4.8</span>
+            <span id="headerUserName" class="text-xs font-semibold text-gray-300 hidden sm:inline">مينا رزق الله</span>
+            <div class="w-8 h-8 rounded-full bg-enterpriseBorder border border-enterpriseCyan/40 flex items-center justify-center text-enterpriseCyan font-bold text-xs">م</div>
         </div>
     </header>
 
     <!-- Sidebar Overlay -->
-    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 z-50 hidden transition-opacity"></div>
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 z-40 hidden transition-opacity"></div>
 
-    <!-- Sidebar Drawer -->
-    <aside id="sidebar" class="fixed top-0 right-0 bottom-0 w-72 bg-cyberCard border-l border-cyberBorder z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5">
+    <!-- Corporate Sidebar Drawer -->
+    <aside id="sidebar" class="fixed top-0 right-0 bottom-0 w-80 bg-enterpriseCard border-l border-enterpriseBorder z-50 transform translate-x-full transition-transform duration-300 flex flex-col justify-between p-5 shadow-2xl">
         <div>
-            <div class="flex justify-between items-center mb-6 pb-4 border-b border-cyberBorder">
-                <div class="flex items-center space-x-2 space-x-reverse">
-                    <div class="w-9 h-9 rounded-xl bg-cyberGreen/10 border border-cyberGreen/30 flex items-center justify-center text-cyberGreen">
-                        <i class="fa-solid fa-user-shield text-sm"></i>
-                    </div>
+            <div class="flex justify-between items-center mb-6 pb-4 border-b border-enterpriseBorder">
+                <div class="flex items-center space-x-3 space-x-reverse">
+                    <div class="w-10 h-10 rounded-xl bg-enterpriseCyan/10 border border-enterpriseCyan/30 flex items-center justify-center text-enterpriseCyan font-bold text-sm">م</div>
                     <div>
-                        <h3 class="text-xs font-black text-white">مـيـنا رزق الله</h3>
-                        <span class="text-[10px] text-cyberGreen font-mono">Cyber Security Lead</span>
+                        <h3 id="sidebarName" class="text-xs font-black text-white">مينا رزق الله</h3>
+                        <span class="text-[10px] text-enterpriseEmerald font-mono">حساب مؤسسي موثق</span>
                     </div>
                 </div>
                 <button onclick="toggleSidebar()" class="text-gray-400 hover:text-white p-2">
@@ -68,87 +109,81 @@
             </div>
 
             <nav class="space-y-1.5 text-xs">
-                <a href="#" onclick="switchTab('home'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberGreen transition">
-                    <i class="fa-solid fa-house w-5 text-center text-cyberGreen"></i>
-                    <span class="font-bold">الرئيسية وغرفة العمليات</span>
+                <a href="#" onclick="switchTab('profile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-enterpriseBorder/50 text-gray-300 hover:text-enterpriseCyan transition">
+                    <i class="fa-solid fa-user-gear w-5 text-center text-enterpriseCyan"></i>
+                    <span class="font-bold">ملفي الشخصي وتأكيد الملكية</span>
                 </a>
-                <a href="#" onclick="switchTab('mobile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberBlue transition">
-                    <i class="fa-solid fa-mobile-screen w-5 text-center text-cyberBlue"></i>
-                    <span class="font-bold">أدوات الهاتف الميدانية</span>
+                <a href="#" onclick="switchTab('about'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-enterpriseBorder/50 text-gray-300 hover:text-enterpriseEmerald transition">
+                    <i class="fa-solid fa-circle-info w-5 text-center text-enterpriseEmerald"></i>
+                    <span class="font-bold">نبذة عن المنظومة</span>
                 </a>
-                <a href="#" onclick="switchTab('pc'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyberGreen transition">
-                    <i class="fa-solid fa-desktop w-5 text-center text-cyberGreen"></i>
-                    <span class="font-bold">أدوات الكمبيوتر المتقدمة</span>
+                <a href="#" onclick="switchTab('faq'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-enterpriseBorder/50 text-gray-300 hover:text-enterpriseGold transition">
+                    <i class="fa-solid fa-circle-question w-5 text-center text-enterpriseGold"></i>
+                    <span class="font-bold">الأسئلة الشائعة (FAQ)</span>
                 </a>
-                <a href="#" onclick="switchTab('wallet'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-yellow-400 transition">
-                    <i class="fa-solid fa-wallet w-5 text-center text-yellow-400"></i>
-                    <span class="font-bold">محفظة الباقات والاشتراكات</span>
+                <a href="#" onclick="switchTab('language'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-enterpriseBorder/50 text-gray-300 hover:text-purple-400 transition">
+                    <i class="fa-solid fa-globe w-5 text-center text-purple-400"></i>
+                    <span class="font-bold">لغة النظام (اللغة العربية)</span>
                 </a>
-                <a href="#" onclick="switchTab('stats'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-purple-400 transition">
-                    <i class="fa-solid fa-chart-line w-5 text-center text-purple-400"></i>
-                    <span class="font-bold">إحصائيات الاستخدام والنشاط</span>
-                </a>
-                <a href="#" onclick="switchTab('support'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-cyan-400 transition">
-                    <i class="fa-solid fa-headset w-5 text-center text-cyan-400"></i>
-                    <span class="font-bold">الدعم الفني وغرفة العمليات</span>
-                </a>
-                <a href="#" onclick="switchTab('profile'); toggleSidebar();" class="flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-cyberBorder/50 text-gray-300 hover:text-gray-100 transition">
-                    <i class="fa-solid fa-user-gear w-5 text-center text-gray-400"></i>
-                    <span class="font-bold">إعدادات الحساب والأمان</span>
-                </a>
+                <div class="pt-3 pb-1 border-t border-enterpriseBorder mt-3">
+                    <button onclick="logoutApp()" class="w-full flex items-center space-x-3 space-x-reverse px-3.5 py-3 rounded-xl hover:bg-red-500/10 text-red-400 transition font-bold">
+                        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                        <span>تسجيل الخروج وإعادة الضبط</span>
+                    </button>
+                </div>
             </nav>
         </div>
 
-        <div class="border-t border-cyberBorder pt-4 text-center">
-            <span class="text-[10px] text-gray-500 font-mono">CyberDeebka Suite © 2026</span>
+        <div class="border-t border-enterpriseBorder pt-4 text-center">
+            <span class="text-[10px] text-gray-500 font-mono">CyberDeebka Security Suite v4.9</span>
         </div>
     </aside>
 
     <!-- Main Content Container -->
-    <main id="mainContent" class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 pb-24">
-        <!-- Dynamically populated by script.js -->
+    <main id="mainContent" class="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-6 pb-28">
+        <!-- Dynamic Corporate Content -->
     </main>
 
-    <!-- Tool Modal Popup -->
+    <!-- Tool Execution Modal -->
     <div id="toolModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-cyberCard border border-cyberBorder rounded-2xl w-full max-w-lg p-5 shadow-2xl relative">
-            <div class="flex justify-between items-center pb-3 border-b border-cyberBorder mb-4">
-                <h3 id="modalToolTitle" class="text-xs font-black text-white flex items-center">تشغيل الأداة</h3>
+        <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl w-full max-w-lg p-5 shadow-2xl relative">
+            <div class="flex justify-between items-center pb-3 border-b border-enterpriseBorder mb-4">
+                <h3 id="modalToolTitle" class="text-xs font-black text-white flex items-center">تشغيل أداة الفحص</h3>
                 <button onclick="closeToolModal()" class="text-gray-400 hover:text-white p-1">
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
             </div>
             <div id="modalToolBody" class="space-y-4">
-                <!-- Dynamic tool execution content -->
+                <!-- Dynamic Results -->
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="bg-cyberCard border-t border-cyberBorder fixed bottom-0 left-0 right-0 z-30 px-4 py-2.5 flex justify-around items-center shadow-lg">
-        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-cyberGreen transition transform -translate-y-2">
-            <i class="fa-solid fa-house text-base mb-1"></i>
-            <span class="text-[10px] font-bold">الرئيسية</span>
-        </button>
-        <button onclick="switchTab('mobile')" id="nav-mobile" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberBlue transition">
+    <!-- Corporate Bottom Navigation (Home centered cleanly) -->
+    <nav class="bg-enterpriseCard border-t border-enterpriseBorder fixed bottom-0 left-0 right-0 z-20 px-3 py-2 flex justify-around items-center shadow-2xl max-w-lg mx-auto rounded-t-2xl">
+        <button onclick="switchTab('mobile')" id="nav-mobile" class="nav-btn flex flex-col items-center text-gray-400 hover:text-enterpriseCyan transition py-1 px-3">
             <i class="fa-solid fa-mobile-screen text-base mb-1"></i>
-            <span class="text-[10px] font-bold">الهاتف</span>
+            <span class="text-[10px] font-bold">أدوات الهاتف</span>
         </button>
-        <button onclick="switchTab('pc')" id="nav-pc" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyberGreen transition">
-            <i class="fa-solid fa-desktop text-base mb-1"></i>
-            <span class="text-[10px] font-bold">الكمبيوتر</span>
+        <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn flex flex-col items-center text-gray-400 hover:text-enterpriseEmerald transition py-1 px-3">
+            <i class="fa-solid fa-file-shield text-base mb-1"></i>
+            <span class="text-[10px] font-bold">التقارير</span>
         </button>
-        <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-btn flex flex-col items-center text-gray-400 hover:text-yellow-400 transition">
+        <!-- Center Prominent Home Button -->
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-enterpriseCyan transform -translate-y-4 bg-enterpriseCard border-2 border-enterpriseCyan p-3.5 rounded-full shadow-xl hover:scale-105 transition">
+            <i class="fa-solid fa-house text-lg"></i>
+        </button>
+        <button onclick="switchTab('wallet')" id="nav-wallet" class="nav-btn flex flex-col items-center text-gray-400 hover:text-enterpriseGold transition py-1 px-3">
             <i class="fa-solid fa-wallet text-base mb-1"></i>
-            <span class="text-[10px] font-bold">الباقات</span>
+            <span class="text-[10px] font-bold">المحفظة</span>
         </button>
-        <button onclick="switchTab('support')" id="nav-support" class="nav-btn flex flex-col items-center text-gray-400 hover:text-cyan-400 transition">
-            <i class="fa-solid fa-headset text-base mb-1"></i>
-            <span class="text-[10px] font-bold">الدعم</span>
+        <button onclick="toggleSidebar()" class="flex flex-col items-center text-gray-400 hover:text-purple-400 transition py-1 px-3">
+            <i class="fa-solid fa-bars-staggered text-base mb-1"></i>
+            <span class="text-[10px] font-bold">القائمة</span>
         </button>
     </nav>
 
-    <!-- External JavaScript Link -->
+    <!-- External Script -->
     <script src="script.js"></script>
 </body>
-</html>
+</ht
