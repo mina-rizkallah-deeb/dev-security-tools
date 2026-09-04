@@ -1,4 +1,3 @@
-// Check Authentication on Startup
 let currentUser = JSON.parse(localStorage.getItem('cyber_auth_user') || 'null');
 
 window.onload = function() {
@@ -21,23 +20,10 @@ function handleAuthSubmit(e) {
     
     document.getElementById('authModal').classList.add('hidden');
     initAppData();
-    alert('تم حفظ بيانات الاعتماد وتأكيد ملكية الحساب بنجاح.');
-}
-
-function simulateGoogleLogin() {
-    currentUser = {
-        name: "مينا رزق الله",
-        email: "mina.rizkallah@sec-enterprise.com",
-        wallet: "01012345678"
-    };
-    localStorage.setItem('cyber_auth_user', JSON.stringify(currentUser));
-    document.getElementById('authModal').classList.add('hidden');
-    initAppData();
-    alert('تم تسجيل الدخول بنجاح عبر حساب Google الرسمي.');
 }
 
 function logoutApp() {
-    if (confirm('هل أنت متأكد من تسجيل الخروج ومسح بيانات الجلسة؟')) {
+    if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
         localStorage.removeItem('cyber_auth_user');
         location.reload();
     }
@@ -51,7 +37,6 @@ function initAppData() {
     switchTab('home');
 }
 
-// Sidebar Toggle
 function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
@@ -59,102 +44,88 @@ function toggleSidebar() {
     overlay.classList.toggle('hidden');
 }
 
-// Professional Tools Data
 const mobileTools = [
-    { id: 1, name: "IP & Network Inspector", type: "free", desc: "فحص وعرض تفاصيل عنوان الـ IP والشبكة الحالية عبر API حقيقي.", func: "runIpInspector" },
-    { id: 2, name: "Port Scanner (Lite)", type: "free", desc: "فحص البورتات الشائعة (80, 443, 22) للسيرفر المستهدف.", func: "runPortScanner" },
-    { id: 3, name: "SSL Certificate Checker", type: "free", desc: "فحص صلاحية وقوة شهادات الأمان SSL/TLS لأي موقع.", func: "runSslChecker" },
-    { id: 4, name: "DNS Lookup Tool", type: "free", desc: "استعلام شامل عن سجلات الـ DNS (A, MX, TXT, NS).", func: "runDnsLookup" },
-    { id: 5, name: "HTTP Headers Analyzer", type: "free", desc: "فحص ترويسات الأمان وكشف ثغرات الـ Headers.", func: "runHeadersAnalyzer" },
-    { id: 6, name: "Base64 Encoder / Decoder", type: "free", desc: "تحويل وفك تشفير النصوص والبيانات بسرعة فائقة.", func: "runBase64" },
-    { id: 7, name: "Ping & Latency Tester", type: "free", desc: "اختبار استجابة وسرعة الاتصال بالسيرفرات المستهدفة.", func: "runPing" },
-    { id: 8, name: "Whois Domain Lookup", type: "free", desc: "استخراج معلومات تسجيل النطاقات والمالكين رسمياً.", func: "runWhois" },
-    { id: 9, name: "Web Response Status", type: "free", desc: "فحص كود الاستجابة الفوري (200, 404, 500, etc.).", func: "runStatusChecker" },
-    { id: 10, name: "Phishing Deep Detector", type: "pro", desc: "فحص الروابط المشبوهة وتحليل إن كانت مدرجة بقوائم التصيد.", func: "runPhishing" },
-    { id: 11, name: "Sub-Domain Quick Finder", type: "pro", desc: "كشف النطاقات الفرعية السريعة للمواقع بدقة عالية.", func: "runSubdomain" },
-    { id: 12, name: "User-Agent Inspector", type: "pro", desc: "فحص وتحليل هويات المتصفحات والأجهزة المتصلة.", func: "runUserAgent" },
-    { id: 13, name: "Text AES Encryption", type: "pro", desc: "تشفير وفك ترميز النصوص العالية السرية بمعيار AES.", func: "runAes" },
-    { id: 14, name: "MAC Vendor Lookup", type: "pro", desc: "كشف مصنع كرت الشبكة من عنوان الـ MAC بدقة.", func: "runMac" },
-    { id: 15, name: "Network Packet Sniffer", type: "pro", desc: "تتبع وحزم التدفق الحي للبيانات عبر السيرفر.", func: "runSniffer" }
+    { id: 1, name: "IP & Network Inspector", type: "free", desc: "فحص وعرض تفاصيل عنوان الـ IP والشبكة.", func: "runIpInspector" },
+    { id: 2, name: "Port Scanner (Lite)", type: "free", desc: "فحص البورتات الشائعة (80, 443, 22).", func: "runGenericToolMock" },
+    { id: 3, name: "SSL Certificate Checker", type: "free", desc: "فحص صلاحية وقوة شهادات الأمان SSL/TLS.", func: "runGenericToolMock" },
+    { id: 4, name: "DNS Lookup Tool", type: "free", desc: "استعلام شامل عن سجلات الـ DNS.", func: "runGenericToolMock" },
+    { id: 5, name: "HTTP Headers Analyzer", type: "free", desc: "فحص ترويسات الأمان وكشف الثغرات.", func: "runGenericToolMock" },
+    { id: 6, name: "Base64 Encoder / Decoder", type: "free", desc: "تحويل وفك تشفير النصوص بسرعة.", func: "runGenericToolMock" },
+    { id: 7, name: "Ping & Latency Tester", type: "free", desc: "اختبار استجابة وسرعة الاتصال بالسيرفرات.", func: "runGenericToolMock" },
+    { id: 8, name: "Whois Domain Lookup", type: "free", desc: "استخراج معلومات تسجيل النطاقات رسمياً.", func: "runGenericToolMock" },
+    { id: 9, name: "Web Response Status", type: "free", desc: "فحص كود الاستجابة الفوري (200, 404).", func: "runGenericToolMock" },
+    { id: 10, name: "Phishing Deep Detector", type: "pro", desc: "فحص الروابط المشبوهة وقوائم التصيد.", func: "runGenericToolMock" },
+    { id: 11, name: "Sub-Domain Quick Finder", type: "pro", desc: "كشف النطاقات الفرعية للمواقع.", func: "runGenericToolMock" },
+    { id: 12, name: "User-Agent Inspector", type: "pro", desc: "فحص وتحليل هويات المتصفحات.", func: "runGenericToolMock" },
+    { id: 13, name: "Text AES Encryption", type: "pro", desc: "تشفير وفك ترميز النصوص بمعيار AES.", func: "runGenericToolMock" },
+    { id: 14, name: "MAC Vendor Lookup", type: "pro", desc: "كشف مصنع كرت الشبكة بدقة.", func: "runGenericToolMock" },
+    { id: 15, name: "Network Packet Sniffer", type: "pro", desc: "تتبع وحزم التدفق الحي للبيانات.", func: "runGenericToolMock" }
 ];
 
 const pcTools = [
-    { id: 101, name: "Basic SQLi Tester", type: "free", desc: "اختبار استجابة مدخلات النماذج لحقن قواعد البيانات.", func: "runSqli" },
-    { id: 102, name: "Simple XSS Verifier", type: "free", desc: "فحص ثغرات البرمجة النصية عبر المواقع (XSS).", func: "runXss" },
-    { id: 103, name: "Cookies Security Inspector", type: "free", desc: "تدقيق أمان ملفات تعريف الارتباط (HttpOnly, Secure).", func: "runCookies" },
-    { id: 104, name: "Webhook Debugger", type: "free", desc: "استقبال واختبار وتتبع طلبات الـ Webhooks بدقة.", func: "runWebhook" },
-    { id: 105, name: "WAF Detector", type: "free", desc: "كشف نوع جدار حماية تطبيقات الويب (WAF) المستخدم.", func: "runWaf" },
-    { id: 106, name: "JWT Decoder & Validator", type: "free", desc: "فك وتدقيق التوكنات الأمنية للمصادقة (JWT Tokens).", func: "runJwt" },
-    { id: 107, name: "Basic Header Security Audit", type: "free", desc: "مراجعة مبدئية لترويسات السيرفر والحماية.", func: "runHeaderAudit" },
-    { id: 108, name: "Light Load & Stress Tester", type: "free", desc: "اختبار تحمل مبدئي لخوادم الويب بالطلبات المتعددة.", func: "runStress" },
-    { id: 109, name: "Advanced Vuln Deep Scanner", type: "pro", desc: "فحص شامل لأخطر الثغرات البرمجية في السيرفرات.", func: "runVulnScan" },
-    { id: 110, name: "Subdomain Enumeration Suite", type: "pro", desc: "سحب وتحليل النطاقات الفرعية العميقة عبر واجهات قوية.", func: "runDeepSub" },
-    { id: 111, name: "Directory Fuzzing Engine", type: "pro", desc: "اكتشاف الملفات والمجلدات السرية المخفية في الويب.", func: "runFuzzing" },
-    { id: 112, name: "CORS Misconfiguration Auditor", type: "pro", desc: "فحص أخطاء إعدادات مشاركة الموارد عبر النطاقات.", func: "runCors" },
-    { id: 113, name: "JS Source Secret Extractor", type: "pro", desc: "استخراج مفاتيح الـ API المسربة بملفات الجافاسكريبت.", func: "runJsExtract" },
-    { id: 114, name: "Deep SSL Cipher Auditor", type: "pro", desc: "فحص خوارزميات التشفير الضعيفة للسيرفرات المشفرة.", func: "runDeepSsl" },
-    { id: 115, name: "API Endpoint Security Auditor", type: "pro", desc: "فحص حماية نقاط النهاية للـ APIs المتقدمة.", func: "runApiAudit" }
+    { id: 101, name: "Basic SQLi Tester", type: "free", desc: "اختبار استجابة مدخلات النماذج لحقن SQL.", func: "runGenericToolMock" },
+    { id: 102, name: "Simple XSS Verifier", type: "free", desc: "فحص ثغرات البرمجة النصية عبر المواقع.", func: "runGenericToolMock" },
+    { id: 103, name: "Cookies Security Inspector", type: "free", desc: "تدقيق أمان ملفات تعريف الارتباط.", func: "runGenericToolMock" },
+    { id: 104, name: "Webhook Debugger", type: "free", desc: "استقبال واختبار طلبات الـ Webhooks.", func: "runGenericToolMock" },
+    { id: 105, name: "WAF Detector", type: "free", desc: "كشف جدار حماية تطبيقات الويب (WAF).", func: "runGenericToolMock" },
+    { id: 106, name: "JWT Decoder & Validator", type: "free", desc: "فك وتدقيق التوكنات الأمنية JWT.", func: "runGenericToolMock" },
+    { id: 107, name: "Header Security Audit", type: "free", desc: "مراجعة ترويسات السيرفر والحماية.", func: "runGenericToolMock" },
+    { id: 108, name: "Light Load & Stress Tester", type: "free", desc: "اختبار تحمل مبدئي لخوادم الويب.", func: "runGenericToolMock" },
+    { id: 109, name: "Advanced Vuln Deep Scanner", type: "pro", desc: "فحص شامل لأخطر الثغرات البرمجية.", func: "runGenericToolMock" },
+    { id: 110, name: "Subdomain Enumeration Suite", type: "pro", desc: "سحب وتحليل النطاقات الفرعية العميقة.", func: "runGenericToolMock" },
+    { id: 111, name: "Directory Fuzzing Engine", type: "pro", desc: "اكتشاف الملفات والمجلدات المخفية.", func: "runGenericToolMock" },
+    { id: 112, name: "CORS Misconfiguration Auditor", type: "pro", desc: "فحص أخطاء مشاركة الموارد CORS.", func: "runGenericToolMock" },
+    { id: 113, name: "JS Source Secret Extractor", type: "pro", desc: "استخراج مفاتيح API المسربة في JS.", func: "runGenericToolMock" },
+    { id: 114, name: "Deep SSL Cipher Auditor", type: "pro", desc: "فحص خوارزميات التشفير الضعيفة للسيرفرات.", func: "runGenericToolMock" },
+    { id: 115, name: "API Endpoint Security Auditor", type: "pro", desc: "فحص حماية نقاط النهاية للـ APIs.", func: "runGenericToolMock" }
 ];
-
-let toolTrials = JSON.parse(localStorage.getItem('deeb_trials') || '{}');
 
 function switchTab(tabId) {
     document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-enterpriseCyan');
-        btn.classList.add('text-gray-400');
+        btn.classList.remove('text-corpAccent');
+        btn.classList.add('text-corpMuted');
     });
     const activeNav = document.getElementById(`nav-${tabId}`);
     if(activeNav) {
-        activeNav.classList.remove('text-gray-400');
-        activeNav.classList.add('text-enterpriseCyan');
+        activeNav.classList.remove('text-corpMuted');
+        activeNav.classList.add('text-corpAccent');
     }
 
     const container = document.getElementById('mainContent');
 
     if (tabId === 'home') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 mb-6 shadow-xl">
-                <div class="flex justify-between items-center mb-4">
-                    <div>
-                        <span class="text-[10px] bg-enterpriseCyan/10 text-enterpriseCyan border border-enterpriseCyan/30 px-3 py-1 rounded-full font-mono font-bold">ENTERPRISE COMMAND CENTER</span>
-                        <h2 class="text-lg font-black text-white mt-2">منظومة <span class="text-enterpriseCyan">CyberDeebka</span> الرسمية</h2>
-                        <p class="text-xs text-gray-400 mt-1">لوحة التحكم المركزية لتدقيق الأمان السيبراني وإدارة الأصول الرقمية.</p>
-                    </div>
-                    <div class="text-right hidden sm:block">
-                        <span class="text-[10px] text-gray-400 block">حالة الأمان العام:</span>
-                        <span class="text-xs font-mono text-emerald-400 font-bold">100% مؤمن</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
-                    <div onclick="switchTab('mobile')" class="bg-enterpriseDark border border-enterpriseBorder p-4 rounded-xl cursor-pointer hover:border-enterpriseCyan transition">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-white">أدوات الهاتف الميدانية</span>
-                            <span class="text-xs text-enterpriseCyan font-mono">15 أداة</span>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5 mb-5">
+                <span class="text-[10px] bg-corpBg border border-corpBorder text-corpMuted px-2.5 py-1 rounded font-mono">ENTERPRISE DASHBOARD</span>
+                <h2 class="text-base font-bold text-white mt-2">منظومة CyberDeebka للأمان السيبراني</h2>
+                <p class="text-xs text-corpMuted mt-1">لوحة التحكم المركزية لإدارة الأدوات وفحص الأصول الرقمية بمعايير الشركات.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <div onclick="switchTab('mobile')" class="bg-corpBg border border-corpBorder p-3.5 rounded-lg cursor-pointer hover:border-corpAccent transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-white">أدوات الهاتف</span>
+                            <span class="text-[10px] text-corpAccent font-mono">15 أداة</span>
                         </div>
-                        <p class="text-[11px] text-gray-400">فحص فوري لعناوين الـ IP، الروابط، وفحص الشبكات الحية.</p>
+                        <p class="text-[11px] text-corpMuted">فحص IP، الروابط، والشبكات الحية.</p>
                     </div>
-                    <div onclick="switchTab('pc')" class="bg-enterpriseDark border border-enterpriseBorder p-4 rounded-xl cursor-pointer hover:border-enterpriseEmerald transition">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-white">أدوات الكمبيوتر المتقدمة</span>
-                            <span class="text-xs text-enterpriseEmerald font-mono">15 أداة</span>
+                    <div onclick="switchTab('pc')" class="bg-corpBg border border-corpBorder p-3.5 rounded-lg cursor-pointer hover:border-corpAccent transition">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-xs font-bold text-white">أدوات الكمبيوتر</span>
+                            <span class="text-[10px] text-corpAccent font-mono">15 أداة</span>
                         </div>
-                        <p class="text-[11px] text-gray-400">فحص الثغرات البرمجية العميقة، كشف الـ WAF، واختبار الأمان.</p>
+                        <p class="text-[11px] text-corpMuted">فحص الثغرات العميقة وواجهات السيرفرات.</p>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl">
-                <h3 class="text-xs font-black text-white mb-3 uppercase tracking-wider">نفق التشفير السيبراني (Secure VPN)</h3>
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder">
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5">
+                <h3 class="text-xs font-bold text-white mb-3">حالة نفق التشفير (Secure VPN Tunneling)</h3>
+                <div class="flex justify-between items-center bg-corpBg p-3.5 rounded-lg border border-corpBorder text-xs">
                     <div>
-                        <div class="flex items-center space-x-2 space-x-reverse">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            <span class="text-xs font-bold text-white">الحالة: نشط ومحمي</span>
-                        </div>
-                        <p class="text-[11px] text-gray-400 mt-1">تشفير كامل لطلبات الفحص وإخفاء الهوية الرقمية.</p>
+                        <span class="text-emerald-400 font-medium">● متصل وآمن</span>
+                        <p class="text-[10px] text-corpMuted mt-0.5">تشفير كامل لجميع طلبات الفحص والتدقيق.</p>
                     </div>
-                    <button onclick="alert('النفق السيبراني مؤمن بالكامل عبر خوادم فرانكفورت.')" class="bg-enterpriseCyan text-black font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-cyan-400 transition">إدارة النفق</button>
+                    <button onclick="alert('النفق نشط ومؤمن بالكامل.')" class="bg-corpBorder text-white text-xs px-3 py-1.5 rounded hover:bg-corpAccent transition">إدارة النفق</button>
                 </div>
             </div>
         `;
@@ -162,100 +133,67 @@ function switchTab(tabId) {
         renderToolList('أدوات الهاتف الميدانية', mobileTools);
     } else if (tabId === 'pc') {
         renderToolList('أدوات الكمبيوتر المتقدمة', pcTools);
-    } else if (tabId === 'reports') {
-        container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl">
-                <h3 class="text-sm font-black text-white mb-4 flex items-center"><i class="fa-solid fa-file-shield text-enterpriseEmerald ml-2"></i> تقارير الأمان وسجل الفحص المؤسسي</h3>
-                <div class="space-y-3 text-xs">
-                    <div class="bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder flex justify-between items-center">
-                        <div>
-                            <span class="font-bold text-white block">تقرير تدقيق شبكة الانترانت</span>
-                            <span class="text-[10px] text-gray-400">تم الفحص عبر أداة IP & Network Inspector</span>
-                        </div>
-                        <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-mono font-bold text-[10px]">مكتمل (0 ثغرات)</span>
-                    </div>
-                    <div class="bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder flex justify-between items-center">
-                        <div>
-                            <span class="font-bold text-white block">تقرير فحص ترويسات الأمان (Headers)</span>
-                            <span class="text-[10px] text-gray-400">تدقيق إعدادات الحماية للسيرفر</span>
-                        </div>
-                        <span class="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full font-mono font-bold text-[10px]">مكتمل (آمن)</span>
-                    </div>
-                </div>
-            </div>
-        `;
     } else if (tabId === 'wallet') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl">
-                <div class="flex items-center space-x-3 space-x-reverse mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-enterpriseGold/10 border border-enterpriseGold/30 flex items-center justify-center text-enterpriseGold text-lg">
-                        <i class="fa-solid fa-wallet"></i>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5">
+                <h3 class="text-xs font-bold text-white mb-4">محفظة التحويلات والأرباح</h3>
+                <div class="bg-corpBg p-4 rounded-lg border border-corpBorder mb-4 flex justify-between items-center">
+                    <div>
+                        <span class="text-[11px] text-corpMuted block mb-1">رقم المحفظة المسجل:</span>
+                        <strong class="text-xs text-white font-mono">${currentUser ? currentUser.wallet : 'غير محدد'}</strong>
                     </div>
                     <div>
-                        <h3 class="text-sm font-black text-white">محفظة التحويلات والأرباح</h3>
-                        <p class="text-xs text-gray-400">إدارة الرصيد المسجل على رقم المحفظة: <strong class="text-enterpriseCyan">${currentUser ? currentUser.wallet : 'غير محدد'}</strong></p>
+                        <span class="text-[11px] text-corpMuted block mb-1">الرصيد المتاح:</span>
+                        <span class="text-lg font-bold text-white font-mono">0.00 EGP</span>
                     </div>
                 </div>
-
-                <div class="bg-enterpriseDark p-5 rounded-xl border border-enterpriseBorder mb-6 flex justify-between items-center">
-                    <div>
-                        <span class="text-xs text-gray-400 block mb-1">الرصيد المتاح للتحويل:</span>
-                        <span class="text-2xl font-mono font-black text-enterpriseGold">0.00 <span class="text-xs text-gray-400">EGP</span></span>
-                    </div>
-                    <button onclick="alert('طلب السحب والتحويل متاح عند وصول الرصيد إلى الحد الأدنى (200 جنيه).')" class="bg-enterpriseGold text-black font-bold text-xs px-4 py-2.5 rounded-xl hover:bg-amber-400 transition">سحب الأرباح</button>
-                </div>
+                <button onclick="alert('الحد الأدنى للسحب 200 جنيه.')" class="w-full bg-corpBorder text-white font-medium py-2.5 rounded-lg hover:bg-corpAccent transition text-xs">طلب سحب الأرباح</button>
             </div>
         `;
     } else if (tabId === 'profile') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl">
-                <h3 class="text-sm font-black text-white mb-4 flex items-center"><i class="fa-solid fa-user-gear text-enterpriseCyan ml-2"></i> ملفي الشخصي وتأكيد الملكية</h3>
-                <div class="space-y-4 text-xs">
-                    <div>
-                        <label class="text-gray-400 block mb-1">الاسم الكامل:</label>
-                        <input type="text" id="profName" value="${currentUser ? currentUser.name : ''}" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
-                    </div>
-                    <div>
-                        <label class="text-gray-400 block mb-1">البريد الإلكتروني المؤسسي:</label>
-                        <input type="email" id="profEmail" value="${currentUser ? currentUser.email : ''}" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
-                    </div>
-                    <div>
-                        <label class="text-gray-400 block mb-1">رقم محفظة التحويل:</label>
-                        <input type="text" id="profWallet" value="${currentUser ? currentUser.wallet : ''}" class="w-full bg-enterpriseDark border border-enterpriseBorder rounded-xl p-3 text-white focus:outline-none focus:border-enterpriseCyan">
-                    </div>
-                    <button onclick="updateProfileData()" class="w-full bg-enterpriseCyan text-black font-bold py-3 rounded-xl hover:bg-cyan-400 transition">حفظ التعديلات وتحديث الملكية</button>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5 text-xs space-y-3">
+                <h3 class="text-sm font-bold text-white mb-2">الملف الشخصي وتأكيد الملكية</h3>
+                <div>
+                    <label class="text-corpMuted block mb-1">الاسم الكامل:</label>
+                    <input type="text" id="profName" value="${currentUser ? currentUser.name : ''}" class="w-full bg-corpBg border border-corpBorder rounded-lg p-2.5 text-white">
                 </div>
+                <div>
+                    <label class="text-corpMuted block mb-1">البريد الإلكتروني:</label>
+                    <input type="email" id="profEmail" value="${currentUser ? currentUser.email : ''}" class="w-full bg-corpBg border border-corpBorder rounded-lg p-2.5 text-white">
+                </div>
+                <div>
+                    <label class="text-corpMuted block mb-1">رقم المحفظة:</label>
+                    <input type="text" id="profWallet" value="${currentUser ? currentUser.wallet : ''}" class="w-full bg-corpBg border border-corpBorder rounded-lg p-2.5 text-white">
+                </div>
+                <button onclick="updateProfileData()" class="w-full bg-corpAccent text-white py-2.5 rounded-lg font-medium">حفظ التعديلات</button>
             </div>
         `;
     } else if (tabId === 'about') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl text-xs space-y-3">
-                <h3 class="text-sm font-black text-white mb-2 flex items-center"><i class="fa-solid fa-circle-info text-enterpriseEmerald ml-2"></i> نبذة عن المنظومة</h3>
-                <p class="text-gray-300 leading-relaxed">منظومة <strong>CyberDeebka Enterprise Security Suite</strong> هي منصة احترافية مخصصة لمهندسي الأمان السيبراني واختبار الاختراق الأخلاقي، تم تطويرها لتوفير أدوات فحص حية وسريعة بمعايير مؤسسية صارمة.</p>
-                <p class="text-gray-400">إشراف وتطوير: مـيـنا رزق الله (Cyber Security Lead).</p>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5 text-xs space-y-2">
+                <h3 class="text-sm font-bold text-white mb-2">نبذة عن المنظومة</h3>
+                <p class="text-corpMuted leading-relaxed">منظومة CyberDeebka Enterprise Security Suite هي منصة هندسية لاختبار الاختراق وتدقيق الأمان.</p>
+                <p class="text-corpMuted">تطوير وإشراف: مـيـنا رزق الله.</p>
             </div>
         `;
     } else if (tabId === 'faq') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl text-xs space-y-4">
-                <h3 class="text-sm font-black text-white mb-2 flex items-center"><i class="fa-solid fa-circle-question text-enterpriseGold ml-2"></i> الأسئلة الشائعة (FAQ)</h3>
-                <div class="bg-enterpriseDark p-3.5 rounded-xl border border-enterpriseBorder">
-                    <strong class="text-white block mb-1">س: كيف يتم تحويل الأرباح والفلوس؟</strong>
-                    <p class="text-gray-400">ج: يتم تحويل الأرباح حصرياً عبر رقم محفظة فودافون كاش المسجل في ملفك الشخصي وعند تأكيد الملكية.</p>
-                </div>
-                <div class="bg-enterpriseDark p-3.5 rounded-xl border border-enterpriseBorder">
-                    <strong class="text-white block mb-1">س: هل الأدوات آمنة للاستخدام المهني؟</strong>
-                    <p class="text-gray-400">ج: نعم، كافة الأدوات تعمل عبر نفق تشفير آمن لضمان عدم تتبع الطلبات.</p>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5 text-xs space-y-3">
+                <h3 class="text-sm font-bold text-white mb-2">الأسئلة الشائعة</h3>
+                <div class="bg-corpBg p-3 rounded-lg border border-corpBorder">
+                    <strong class="text-white block mb-1">س: كيف تتم تحويلات الأرباح؟</strong>
+                    <p class="text-corpMuted">ج: تُحول الأرباح حصرياً عبر رقم فودافون كاش المسجل في ملفك الشخصي.</p>
                 </div>
             </div>
         `;
     } else if (tabId === 'language') {
         container.innerHTML = `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-6 shadow-xl text-xs space-y-4">
-                <h3 class="text-sm font-black text-white mb-2 flex items-center"><i class="fa-solid fa-globe text-purple-400 ml-2"></i> إعدادات اللغة</h3>
-                <div class="bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder flex justify-between items-center">
-                    <span class="text-white font-bold">اللغة العربية (العنوان الرسمي)</span>
-                    <span class="bg-enterpriseCyan/20 text-enterpriseCyan px-3 py-1 rounded-lg font-bold">الافتراضية (مفعلة)</span>
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-5 text-xs">
+                <h3 class="text-sm font-bold text-white mb-3">لغة النظام</h3>
+                <div class="bg-corpBg p-3 rounded-lg border border-corpBorder flex justify-between items-center text-corpMuted">
+                    <span>اللغة العربية</span>
+                    <span class="text-white font-medium">الافتراضية</span>
                 </div>
             </div>
         `;
@@ -266,40 +204,38 @@ function updateProfileData() {
     const name = document.getElementById('profName').value;
     const email = document.getElementById('profEmail').value;
     const wallet = document.getElementById('profWallet').value;
-
     currentUser = { name, email, wallet };
     localStorage.setItem('cyber_auth_user', JSON.stringify(currentUser));
     document.getElementById('sidebarName').innerText = name;
     document.getElementById('headerUserName').innerText = name;
-    alert('تم تحديث ملفك الشخصي وتأكيد بيانات الملكية بنجاح.');
+    alert('تم التحديث بنجاح.');
 }
 
 function renderToolList(title, toolsArray) {
     const container = document.getElementById('mainContent');
     let html = `
-        <div class="mb-5">
-            <h2 class="text-sm font-black text-white mb-1 flex items-center"><i class="fa-solid fa-cube text-enterpriseCyan ml-2"></i> ${title}</h2>
-            <p class="text-xs text-gray-400">اختر الأداة المطلوبة لبدء الفحص عبر خوادم المنصة المؤسسية الآمنة.</p>
+        <div class="mb-4">
+            <h2 class="text-xs font-bold text-white mb-1">${title}</h2>
+            <p class="text-[11px] text-corpMuted">اختر الأداة المطلوبة لبدء التدقيق.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     `;
 
     toolsArray.forEach(tool => {
         const isPro = tool.type === 'pro';
         html += `
-            <div class="bg-enterpriseCard border border-enterpriseBorder rounded-2xl p-4 flex flex-col justify-between hover:border-gray-500 transition shadow-lg">
+            <div class="bg-corpCard border border-corpBorder rounded-xl p-3.5 flex flex-col justify-between">
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="text-xs font-black text-white">${tool.name}</h3>
-                        <span class="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase ${isPro ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'}">
-                            ${isPro ? 'PRO VIP' : 'مجاني'}
+                    <div class="flex justify-between items-center mb-1.5">
+                        <h3 class="text-xs font-bold text-white">${tool.name}</h3>
+                        <span class="text-[9px] px-2 py-0.5 rounded font-mono ${isPro ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">
+                            ${isPro ? 'PRO' : 'FREE'}
                         </span>
                     </div>
-                    <p class="text-[11px] text-gray-400 mb-4 leading-relaxed">${tool.desc}</p>
+                    <p class="text-[11px] text-corpMuted mb-3">${tool.desc}</p>
                 </div>
-                <button onclick="executeTool('${tool.name}', '${tool.func}')" class="w-full bg-enterpriseDark border border-enterpriseBorder text-xs text-gray-200 py-2.5 rounded-xl hover:bg-enterpriseCyan hover:text-black font-bold transition flex items-center justify-center space-x-2 space-x-reverse">
-                    <i class="fa-solid fa-play text-[10px]"></i>
-                    <span>تشغيل الأداة</span>
+                <button onclick="executeTool('${tool.name}', '${tool.func}')" class="w-full bg-corpBg border border-corpBorder text-xs text-corpText py-2 rounded-lg hover:bg-corpAccent hover:text-white transition font-medium">
+                    تشغيل الأداة
                 </button>
             </div>
         `;
@@ -314,12 +250,12 @@ function executeTool(toolName, funcName) {
     if (typeof window[funcName] === 'function') {
         window[funcName]();
     } else {
-        runGenericToolMock(toolName);
+        runGenericToolMock();
     }
 }
 
 function openToolModal(title) {
-    document.getElementById('modalToolTitle').innerHTML = `<i class="fa-solid fa-terminal text-enterpriseCyan ml-2"></i> تشغيل: ${title}`;
+    document.getElementById('modalToolTitle').innerText = `تنفيذ: ${title}`;
     document.getElementById('toolModal').classList.remove('hidden');
 }
 
@@ -329,35 +265,34 @@ function closeToolModal() {
 
 async function runIpInspector() {
     const body = document.getElementById('modalToolBody');
-    body.innerHTML = `<p class="text-xs text-gray-400 animate-pulse">جاري جلب تفاصيل الـ IP عبر خوادم التدقيق...</p>`;
+    body.innerHTML = `<p class="text-xs text-corpMuted">جاري الاتصال بالسيرفر...</p>`;
     try {
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
         body.innerHTML = `
-            <div class="bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder font-mono text-xs space-y-2 text-enterpriseCyan">
-                <p>IP Address: ${data.ip}</p>
-                <p>Country: ${data.country_name} (${data.country_code})</p>
+            <div class="bg-corpBg p-3 rounded-lg border border-corpBorder font-mono text-xs space-y-1.5 text-white">
+                <p>IP: ${data.ip}</p>
+                <p>Country: ${data.country_name}</p>
                 <p>City: ${data.city}</p>
                 <p>ISP: ${data.org}</p>
             </div>
-            <button onclick="closeToolModal()" class="w-full bg-enterpriseCyan text-black font-bold text-xs py-2.5 rounded-xl">إغلاق النتائج</button>
+            <button onclick="closeToolModal()" class="w-full bg-corpAccent text-white py-2 rounded-lg text-xs font-medium">إغلاق</button>
         `;
     } catch (e) {
-        body.innerHTML = `<p class="text-xs text-red-400">فشل الاتصال بخدمة الـ IP.</p>`;
+        body.innerHTML = `<p class="text-xs text-red-400">فشل جلب البيانات.</p>`;
     }
 }
 
-function runGenericToolMock(name) {
+function runGenericToolMock() {
     const body = document.getElementById('modalToolBody');
     body.innerHTML = `
         <div class="space-y-3 text-xs">
-            <p class="text-gray-300">أداة الفحص: <strong class="text-enterpriseCyan">${name}</strong></p>
-            <div class="bg-enterpriseDark p-4 rounded-xl border border-enterpriseBorder font-mono text-[11px] text-gray-300 space-y-1.5">
-                <p class="text-enterpriseCyan">[+] Initializing corporate security protocol...</p>
-                <p>[+] Target verification successful.</p>
-                <p class="text-enterpriseEmerald">[✓] Audit finished. Status: Secure.</p>
+            <div class="bg-corpBg p-3 rounded-lg border border-corpBorder font-mono text-[11px] text-corpMuted space-y-1">
+                <p class="text-white">[+] Initializing security check...</p>
+                <p>[+] Target verification passed.</p>
+                <p class="text-emerald-400">[✓] Audit complete. Status: Secure.</p>
             </div>
-            <button onclick="closeToolModal()" class="w-full bg-enterpriseCyan text-black font-bold py-2.5 rounded-xl">إنهاء الجلسة</button>
+            <button onclick="closeToolModal()" class="w-full bg-corpAccent text-white py-2 rounded-lg font-medium">إغلاق</button>
         </div>
     `;
-}
+    }
